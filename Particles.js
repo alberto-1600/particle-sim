@@ -1,4 +1,4 @@
-import { Vector2d } from "./Vectors.js";
+import { Vector2d, VectorPolar } from "./Vectors.js";
 import { VectorMath } from "./Vectors.js";
 
 const canvas = document.getElementById("canvas1");
@@ -14,6 +14,10 @@ function circle(x,y,r,color="#000000"){
 
 export class Particle{
     constructor(pos,vel,acc,r,color){
+        this.pos = pos
+        this.vel = vel
+        this.acc = acc
+
         this.x = pos.x1;
         this.y = pos.y1;
         this.vx = vel.x1;
@@ -44,7 +48,9 @@ export class Particle{
 
     check_particle_collision(other){
         //p1 is the particle we're checking the collision with
-        let distance_vector = new Vector2d(other.x, other.y, this.x, this.y)
+
+
+        const distance_vector = new Vector2d(other.x, other.y, this.x, this.y)
 
         //the next block of code is to set "collision_detected" only if there was a collision
         //  in this frame and no collision in the frame before, to prevent overlapping
@@ -56,14 +62,21 @@ export class Particle{
             this.current_frame_collision = false
         }
         this.collision_detected = this.last_frame_collision==false && this.current_frame_collision==true
-
+        
         if(this.collision_detected){
+            //1. first we displace the particles so that they arent overlapping anymore. 
+            //   We displace them along the axis created by the two centers. 
+            const mid_point = new VectorPolar(distance_vector.mag/2, distance_vector.arg, distance_vector.x0, distance_vector.y0)
+
+            const this_displacement = new VectorPolar(this.r, mid_point.arg, mid_point.x0, mid_point.y0)
+            const other_displacement = new VectorPolar(-other.r, mid_point.arg, mid_point.x0, mid_point.y0)
+
+            this.pos = VectorMath.add(this.pos, this_displacement)
+            other.pos = VectorMath.add(other.pos, other_displacement)
             //now the next block of code is to elaborate the collision and modify the velocities according to physics
+            
 
             //first we displace the balls accordingly if they are overlapping
-            const mid_distance = VectorMath.divide(distance_vector,2)
-            mid_distance.draw_vect()
-
             let m0 = this.r**2 //we define mass=radius**2
             let m1 = other.r**2
 
@@ -98,5 +111,15 @@ export class Particle{
         this.vy += this.ay
         this.x += this.vx
         this.y += this.vy
+    }
+
+    refresh_position(){
+        //used if we are modifying the pos, vel, acc vectors directly
+        this.x = pos.x1;
+        this.y = pos.y1;
+        this.vx = vel.x1;
+        this.vy = vel.y1;
+        this.ax = acc.x1;
+        this.ay = acc.y1;
     }
 }

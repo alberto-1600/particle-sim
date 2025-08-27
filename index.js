@@ -31,7 +31,7 @@ function circle(x,y,r,color="#000000"){
 
 //test
 import { Particle } from "./Particles.js";
-import { Vector2d } from "./Vectors.js";
+import { Vector2d, VectorMath, VectorPolar } from "./Vectors.js";
 
 const particles = []
 

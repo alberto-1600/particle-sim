@@ -36,7 +36,7 @@ export class VectorPolar{
         this.arg = arg
 
         this.x1 = this.mag*Math.cos(this.arg)+x0
-        this.y1 = this.mag*Math.sin(this.arg)+x0
+        this.y1 = this.mag*Math.sin(this.arg)+y0
     }
 
     draw_vect(){
@@ -48,18 +48,7 @@ export class VectorMath{
     constructor(){
     }
 
-    static PolarToRect(v){
-        return new Vector2d(v.x1,v.y1,v.x0,v.y0)
-    }
-
-    static RectToPolar(v){
-        return new VectorPolar(v.mag, v.arg,v.x0,v.y0)
-    }
-
-    static divide(v,a){
-        let new_v_polar = new VectorPolar(v.mag/a, v.arg, v.x0, v.y0)
-        let new_v_2d = this.PolarToRect(new_v_polar)
-
-        return new_v_2d
+    add(v1,v2){
+        return new Vector2d(v1.x1+v2.x1, v1.y1+v2.y1, v1.x0+v2.x0, v1.y0+v2.y0)
     }
 }
