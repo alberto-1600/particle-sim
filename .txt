@@ -1,0 +1,22 @@
+
+
+    function update()
+{
+    clearCanvas()
+    
+    let p0 = particles[0]
+    let p1 = particles[1]
+    
+    p0.check_boundary_collision()
+    p1.check_boundary_collision()
+
+    p0.check_particle_collision(p1)
+
+    p0.update_position()
+    p1.update_position()
+
+    p0.draw()
+    p1.draw()
+
+    requestAnimationFrame(update)
+}
