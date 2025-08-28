@@ -73,20 +73,19 @@ function update()
     //    p0.draw()
     //}
 
-    let v0 = new Vector2d(100,200,150,10)
-    v0.draw_vect()
-
-    let v1 = new Vector2d(100,300)
-    v1.draw_vect()
-
-    let v2 = VectorMath.add(v0,v1)
-    v2.draw_vect()
+    
 
     requestAnimationFrame(update)
 }
 
 
-update()
+//update()
+let v0 = new VectorPolar(100,0,100,100)
+v0.draw_vect()
 
+let v1 = VectorMath.orthogonal(v0)
+v1.draw_vect()
+
+console.log(v0)
 
 
