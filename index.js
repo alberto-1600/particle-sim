@@ -35,7 +35,7 @@ import { Vector2d, VectorMath, VectorPolar } from "./Vectors.js";
 
 const particles = []
 
-const N=2
+const N=0
 for(let i=0; i<N;i++){
     const x = Math.random()*(canvas.width-50)
     const y = 250 //Math.random()*(canvas.height-50)
@@ -50,7 +50,7 @@ for(let i=0; i<N;i++){
     const acc = new Vector2d(ax,ay)
 
     const r = 10
-    const color = "#ff00ff"
+    const color = "#00ff00"
 
     const p = new Particle(pos,vel,acc,r,color)
     particles.push(p)
@@ -60,18 +60,27 @@ function update()
 {
     clearCanvas()
     
-    for(let i=0; i<particles.length;i++){
-        let p0=particles[i]
-        //if(i==0){console.log(p0)}
-        p0.check_boundary_collision()
-        
-        for(let j=i+1; j<particles.length; j++){
-            let p1 = particles[j]
-            p0.check_particle_collision(p1)
-        }
-        p0.update_position()
-        p0.draw()
-    }
+    //for(let i=0; i<particles.length;i++){
+    //    let p0=particles[i]
+    //    //if(i==0){console.log(p0)}
+    //    p0.check_boundary_collision()
+    //    
+    //    for(let j=i+1; j<particles.length; j++){
+    //        let p1 = particles[j]
+    //        p0.check_particle_collision(p1)
+    //    }
+    //    p0.update_position()
+    //    p0.draw()
+    //}
+
+    let v0 = new Vector2d(50,10,10,10)
+    v0.draw_vect()
+
+    let v1 = new Vector2d(100,300)
+    v1.draw_vect()
+
+    let v2 = VectorMath.add(v0,v1)
+    v2.draw_vect()
 
     requestAnimationFrame(update)
 }

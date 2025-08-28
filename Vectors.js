@@ -10,6 +10,13 @@ function draw_line(x0,y0,x1,y1,color){
     ctx.stroke()
 }
 
+function draw_circle(x,y,r,color="#000000"){
+    ctx.beginPath();
+    ctx.arc(x,y,r,0,Math.PI*2)
+    ctx.fillStyle = color
+    ctx.fill()
+}
+
 export class Vector2d{
     constructor(x1=0,y1=0,x0=0,y0=0){
         //by default a vector can be defined by just the end position and it will set as start position (0,0) unless specified.
@@ -24,6 +31,7 @@ export class Vector2d{
 
     draw_vect(){
         draw_line(this.x0, this.y0, this.x1, this.y1, "#000000")
+        draw_circle(this.x1, this.y1, 5, "#ff0000")
     }
 }
 
@@ -48,7 +56,7 @@ export class VectorMath{
     constructor(){
     }
 
-    add(v1,v2){
+    static add(v1,v2){
         return new Vector2d(v1.x1+v2.x1, v1.y1+v2.y1, v1.x0+v2.x0, v1.y0+v2.y0)
     }
 }

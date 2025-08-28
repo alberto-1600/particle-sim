@@ -48,10 +48,7 @@ export class Particle{
 
     check_particle_collision(other){
         //p1 is the particle we're checking the collision with
-
-
         const distance_vector = new Vector2d(other.x, other.y, this.x, this.y)
-
         //the next block of code is to set "collision_detected" only if there was a collision
         //  in this frame and no collision in the frame before, to prevent overlapping
         this.last_frame_collision = this.current_frame_collision
@@ -64,17 +61,7 @@ export class Particle{
         this.collision_detected = this.last_frame_collision==false && this.current_frame_collision==true
         
         if(this.collision_detected){
-            //1. first we displace the particles so that they arent overlapping anymore. 
-            //   We displace them along the axis created by the two centers. 
-            const mid_point = new VectorPolar(distance_vector.mag/2, distance_vector.arg, distance_vector.x0, distance_vector.y0)
-
-            const this_displacement = new VectorPolar(this.r, mid_point.arg, mid_point.x0, mid_point.y0)
-            const other_displacement = new VectorPolar(-other.r, mid_point.arg, mid_point.x0, mid_point.y0)
-
-            this.pos = VectorMath.add(this.pos, this_displacement)
-            other.pos = VectorMath.add(other.pos, other_displacement)
             //now the next block of code is to elaborate the collision and modify the velocities according to physics
-            
 
             //first we displace the balls accordingly if they are overlapping
             let m0 = this.r**2 //we define mass=radius**2
