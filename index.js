@@ -73,7 +73,7 @@ function update()
     //    p0.draw()
     //}
 
-    let v0 = new Vector2d(50,10,10,10)
+    let v0 = new Vector2d(100,200,150,10)
     v0.draw_vect()
 
     let v1 = new Vector2d(100,300)

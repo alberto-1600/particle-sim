@@ -25,6 +25,9 @@ export class Vector2d{
         this.x1 = x1 //ending point of the vector
         this.y1 = y1
 
+        this.horizontal_component = this.x1-this.x0
+        this.vertical_component = this.y1-this.y0
+
         this.mag = Math.sqrt((x0-x1)**2+(y0-y1)**2) //vector magnitude (lenght)
         this.arg = Math.atan2((y1-y0),(x1-x0)) //vector argument (angle)
     }
@@ -57,6 +60,10 @@ export class VectorMath{
     }
 
     static add(v1,v2){
-        return new Vector2d(v1.x1+v2.x1, v1.y1+v2.y1, v1.x0+v2.x0, v1.y0+v2.y0)
+        //returns a vector with origin at x0=0, y0=0 with components corresponding to the sum of components of v1 and v2
+        return new Vector2d(
+            v1.horizontal_component+v2.horizontal_component,
+            v1.vertical_component+v2.vertical_component
+        )
     }
 }
