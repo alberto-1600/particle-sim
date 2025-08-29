@@ -76,9 +76,10 @@ export class VectorMath{
 
     static normalize(v){
         //returns a unit Vector2d in the same direction as v
-        return new VectorPolar(
+        return this.PolarToRect(new VectorPolar(
             1,
             v.arg
+            )
         )
     }
 
@@ -88,7 +89,17 @@ export class VectorMath{
     }
 
     static orthogonal(v){
-        //returns a Vector2d ortogonal to v (clockwise)
+        //returns a Vector2d orthogonal to v (clockwise) with the same origin
         return this.PolarToRect(new VectorPolar(v.mag, v.arg+Math.PI/2,v.x0,v.y0))
+    }
+
+    static simmetric(v,u){
+        //returns a Vector2d that is simmetric to v with axis u
+        return new VectorPolar(
+            v.mag,
+            2*u.arg-v.arg,
+            v.x0,
+            v.y0
+        )
     }
 }

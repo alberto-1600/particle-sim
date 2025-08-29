@@ -80,12 +80,15 @@ function update()
 
 
 //update()
-let v0 = new VectorPolar(100,0,100,100)
+let v0 = new Vector2d(100,100,200,50)
 v0.draw_vect()
 
 let v1 = VectorMath.orthogonal(v0)
 v1.draw_vect()
 
-console.log(v0)
+let v2 = VectorMath.simmetric(v0,v1)
+//v2.draw_vect()
+
+console.log(v2)
 
 
