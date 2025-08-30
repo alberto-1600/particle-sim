@@ -65,6 +65,21 @@ export class VectorMath{
         return new Vector2d(v.x1,v.y1,v.x0,v.y0)
     }
 
+    static shift(v,v_shift){
+        //returns a Vector2d that is v (Vector2d) shifted by v_shift (Vector2d)
+        return new Vector2d(
+            v.x1+v_shift.horizontal_component,
+            v.y1+v_shift.vertical_component,
+            v.x0+v_shift.horizontal_component,
+            v.y0+v_shift.vertical_component 
+        )
+    }
+
+    static opposite(v){
+        //returns the opposite of v (same angle and magnitude, but origin and end are swapped)
+        return new Vector2d(v.x0,v.y0,v.x1,v.y1)
+    }
+
     static add(v1,v2){
         //v1,v2 can be both Vector2d and VectorPolar
         //returns a vector with origin at x0=0, y0=0 with components corresponding to the sum of components of v1 and v2
@@ -76,11 +91,7 @@ export class VectorMath{
 
     static normalize(v){
         //returns a unit Vector2d in the same direction as v
-        return this.PolarToRect(new VectorPolar(
-            1,
-            v.arg
-            )
-        )
+        return this.PolarToRect(new VectorPolar(1,v.arg))
     }
 
     static dot(v1,v2){
@@ -93,13 +104,13 @@ export class VectorMath{
         return this.PolarToRect(new VectorPolar(v.mag, v.arg+Math.PI/2,v.x0,v.y0))
     }
 
-    static simmetric(v,u){
+    static simmetric(v1,v2){
         //returns a Vector2d that is simmetric to v with axis u
         return new VectorPolar(
-            v.mag,
-            2*u.arg-v.arg,
-            v.x0,
-            v.y0
+            v1.mag,
+            2*v2.arg-v1.arg,
+            v1.x0,
+            v1.y0
         )
     }
 }

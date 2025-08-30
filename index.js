@@ -80,14 +80,16 @@ function update()
 
 
 //update()
-let v0 = new Vector2d(100,100,200,50)
+let v0 = new Vector2d(100,100,200,200)
 v0.draw_vect()
 
-let v1 = VectorMath.orthogonal(v0)
+let w = new Vector2d(25,25)
+
+let v1 = VectorMath.shift(VectorMath.orthogonal(v0),w) 
 v1.draw_vect()
 
 let v2 = VectorMath.simmetric(v0,v1)
-//v2.draw_vect()
+v2.draw_vect()
 
 console.log(v2)
 
