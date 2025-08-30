@@ -31,7 +31,7 @@ function circle(x,y,r,color="#000000"){
 
 //test
 import { Particle } from "./Particles.js";
-import { Vector2d, VectorMath, VectorPolar } from "./Vectors.js";
+import { Vector2d, VectorMath as VM, VectorPolar } from "./Vectors.js";
 
 const particles = []
 
@@ -80,8 +80,13 @@ function update()
 
 
 //update()
-let v0 = new Vector2d(100,100,200,200)
-v0.draw_vect()
+let p0 = new Particle(
+    new Vector2d(100,100),
+    new Vector2d(5,2),
+    new Vector2d(0,0),
+    10,
+    "#FF0000"
+)
 
 
 

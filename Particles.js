@@ -14,99 +14,34 @@ function circle(x,y,r,color="#000000"){
 
 export class Particle{
     constructor(pos,vel,acc,r,color){
-        this.pos = pos
-        this.vel = vel
-        this.acc = acc
+        this.pos = pos //Vector2d with origin at (0,0) and points to the particle position
+        this.vel = vel //Vector2d
+        this.acc = acc //Vector2d
 
-        this.x = pos.x1;
-        this.y = pos.y1;
-        this.vx = vel.x1;
-        this.vy = vel.y1;
-        this.ax = acc.x1;
-        this.ay = acc.y1;
         this.r=r;
         this.color=color
-
-        this.last_frame_collision = false
-        this.current_frame_collision = false
-
-        this.collision_detected = false
     }
+
+    //setters and getters to update x,y,vx,vy,ax,ay
+    get x(){return this.pos.x1}
+    set x(new_x) {this.pos.x1 = new_x}
+
+    get y(){return this.pos.y1}
+    set y(new_y) {this.pos.y1 = new_y}
+
+    get vx(){return this.vel.x1}
+    set vx(new_vx) {this.vel.x1 = new_vx}
+
+    get vy(){return this.vel.y1}
+    set vy(new_vy) {this.vel.y1 = new_vy}
+
+    get ax(){return this.acc.x1}
+    set ax(new_ax) {this.acc.x1 = new_ax}
+
+    get ay(){return this.acc.y1}
+    set ay(new_ay) {this.acc.y1 = new_ay}
 
     draw(){
         circle(this.x, this.y, this.r, this.color)
-    }
-
-    check_boundary_collision(){
-        if(this.x+this.r > canvas.width || this.x-this.r < 0){
-            this.vx*=-0.9
-        }
-        if(this.y+this.r > canvas.height || this.y-this.r < 0){
-            this.vy*=-0.9
-        }
-    }
-
-    check_particle_collision(other){
-        //p1 is the particle we're checking the collision with
-        const distance_vector = new Vector2d(other.x, other.y, this.x, this.y)
-        //the next block of code is to set "collision_detected" only if there was a collision
-        //  in this frame and no collision in the frame before, to prevent overlapping
-        this.last_frame_collision = this.current_frame_collision
-        if(distance_vector.mag < (this.r + other.r)){
-            this.current_frame_collision = true
-        }
-        else{
-            this.current_frame_collision = false
-        }
-        this.collision_detected = this.last_frame_collision==false && this.current_frame_collision==true
-        
-        if(this.collision_detected){
-            //now the next block of code is to elaborate the collision and modify the velocities according to physics
-
-            //first we displace the balls accordingly if they are overlapping
-            let m0 = this.r**2 //we define mass=radius**2
-            let m1 = other.r**2
-
-            //we can calculate vx and vy separately
-            //vx first
-            let v0xi = this.vx // p0 initial velocity x
-            let v1xi = other.vx // p1 initial velocity x
-
-            let v0xf = ((m0-m1)*v0xi + 2*m1*v1xi) / (m0+m1)
-            let v1xf = ((m1-m0)*v1xi + 2*m0*v0xi) / (m0+m1)
-
-            this.vx = v0xf
-            other.vx = v1xf
-
-            //and the same for vy
-            let v0yi = this.vy // p0 initial velocity y
-            let v1yi = other.vy // p1 initial velocity y
-
-            let v0yf = ((m0-m1)*v0yi + 2*m1*v1yi) / (m0+m1)
-            let v1yf = ((m1-m0)*v1yi + 2*m0*v0yi) / (m0+m1)
-
-            this.vy = v0yf
-            other.vy = v1yf
-        }
-        // collision check finished
-
-        return this.collision_detected //return true if the collision happens as described on another comment (only for logging purposes)
-    }
-
-    update_position(){
-        this.vx += this.ax
-        this.vy += this.ay
-        this.x += this.vx
-        this.y += this.vy
-    }
-
-    refresh_position(){
-        //used if we are modifying the pos, vel, acc vectors directly
-        this.x = pos.x1;
-        this.y = pos.y1;
-        this.vx = vel.x1;
-        this.vy = vel.y1;
-        this.ax = acc.x1;
-        this.ay = acc.y1;
     }
 }
