@@ -81,12 +81,25 @@ function update()
 
 //update()
 let p0 = new Particle(
-    new Vector2d(100,100),
-    new Vector2d(5,2),
+    new Vector2d(200,200),
+    new Vector2d(10,10),
     new Vector2d(0,0),
-    10,
+    15,
     "#FF0000"
 )
+
+let p1 = new Particle(
+    new Vector2d(255,200),
+    new Vector2d(10,10),
+    new Vector2d(0,0),
+    40,
+    "#0000FF"
+)
+
+p0.draw()
+p1.draw()
+
+p0.static_collision(p1)
 
 
 

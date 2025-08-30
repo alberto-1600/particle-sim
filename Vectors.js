@@ -103,6 +103,31 @@ export class VectorMath{
     
 
     //VECTOR MATH
+    static setOrigin(v, new_origin){
+        //returns a Vector2d with same mag and arg as v, but with origin in new_origin (Vector2d)
+        return this.PolarToRect(
+            new VectorPolar(
+                v.mag,
+                v.arg,
+                new_origin.x1,
+                new_origin.y1
+            )
+        )
+    }
+
+    static copyOrigin(v1,v2){
+        //returns a vector with the same mag and arg as v1, but with the origin of v2
+        //(copies v2 origin into v1)
+        return this.PolarToRect(
+            new VectorPolar(
+                v1.mag,
+                v1.arg,
+                v2.x0,
+                v2.y0
+            )
+        )
+    }
+
     static shift(v,v_shift){
         //returns a Vector2d that is v (Vector2d) shifted by v_shift (Vector2d)
         return new Vector2d(
@@ -125,6 +150,10 @@ export class VectorMath{
             v1.horizontal_component+v2.horizontal_component,
             v1.vertical_component+v2.vertical_component
         )
+    }
+
+    static subtract(v1,v2){
+        return this.add(v1, this.opposite(v2))
     }
 
     static normal(v){

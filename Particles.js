@@ -1,5 +1,5 @@
 import { Vector2d, VectorPolar } from "./Vectors.js";
-import { VectorMath } from "./Vectors.js";
+import { VectorMath as VM } from "./Vectors.js";
 
 const canvas = document.getElementById("canvas1");
 const ctx = canvas.getContext("2d")
@@ -21,6 +21,10 @@ export class Particle{
         this.r=r;
         this.color=color
     }
+    
+    draw(){
+        circle(this.x, this.y, this.r, this.color)
+    }
 
     //setters and getters to update x,y,vx,vy,ax,ay
     get x(){return this.pos.x1}
@@ -41,7 +45,13 @@ export class Particle{
     get ay(){return this.acc.y1}
     set ay(new_ay) {this.acc.y1 = new_ay}
 
-    draw(){
-        circle(this.x, this.y, this.r, this.color)
+    static_collision(other){
+        //checks if two particles are overlapping (1)
+        //if so updates the positions of both particles so that they touching on their edge
+        //done by shifting the two particles along the axis of their centers 
+        const distance = VM.subtract(this.pos, other.pos)
+        if(distance.mag < this.r+other.r){
+            console.log("static collision")
+        }
     }
 }
