@@ -33,8 +33,20 @@ export class Vector2d{
     }
 
     draw_vect(){
+        //draw the vector's line
         draw_line(this.x0, this.y0, this.x1, this.y1, "#000000")
-        draw_circle(this.x1, this.y1, 5, "#ff0000")
+
+        //draw the vector's head (arrow) using vectors
+        const arrow_angle = Math.PI/10
+        const arrow_lenght = 20
+        const arrow_line = VectorMath.phase_shift(VectorMath.scalar_mul(VectorMath.normal(VectorMath.opposite(this)),arrow_lenght),arrow_angle)
+        draw_line(arrow_line.x0, arrow_line.y0, arrow_line.x1, arrow_line.y1, "#000000ff")
+        
+        const arrow_line2 = VectorMath.simmetric(arrow_line, this)
+        draw_line(arrow_line2.x0, arrow_line2.y0, arrow_line2.x1, arrow_line2.y1, "#000000ff")
+
+        //draw the vector's origin with a circle
+        draw_circle(this.x0, this.y0, 4, "#000000")
     }
 }
 
@@ -54,17 +66,43 @@ export class VectorPolar{
     }
 
     draw_vect(){
+        //draw the vector's line
         draw_line(this.x0, this.y0, this.x1, this.y1, "#000000")
-        draw_circle(this.x1, this.y1, 5, "#ff0000")
+
+        //draw the vector's head (arrow) using vectors
+        const arrow_angle = Math.PI/10
+        const arrow_lenght = 20
+        const arrow_line = VectorMath.phase_shift(VectorMath.scalar_mul(VectorMath.normal(VectorMath.opposite(this)),arrow_lenght),arrow_angle)
+        draw_line(arrow_line.x0, arrow_line.y0, arrow_line.x1, arrow_line.y1, "#000000ff")
+        
+        const arrow_line2 = VectorMath.simmetric(arrow_line, this)
+        draw_line(arrow_line2.x0, arrow_line2.y0, arrow_line2.x1, arrow_line2.y1, "#000000ff")
+
+        //draw the vector's origin with a circle
+        draw_circle(this.x0, this.y0, 4, "#000000")
     }
 }
 
 export class VectorMath{
+    //MISC
     static PolarToRect(v){
         //returns a Vector2d given a VectorPolar
         return new Vector2d(v.x1,v.y1,v.x0,v.y0)
     }
 
+    //SCALAR MATH
+    static scalar_mul(v, a){
+        //scalar multiplication between v and a. returns a Vector2d whose magnitude is v.mag*a
+        return this.PolarToRect(new VectorPolar(v.mag*a, v.arg, v.x0, v.y0))
+    }
+
+    static phase_shift(v,phi){
+        //returns a Vector2d whose phase is v.arg shifted by phi
+        return this.PolarToRect(new VectorPolar(v.mag, v.arg+phi, v.x0, v.y0))
+    }
+    
+
+    //VECTOR MATH
     static shift(v,v_shift){
         //returns a Vector2d that is v (Vector2d) shifted by v_shift (Vector2d)
         return new Vector2d(
@@ -89,9 +127,9 @@ export class VectorMath{
         )
     }
 
-    static normalize(v){
-        //returns a unit Vector2d in the same direction as v
-        return this.PolarToRect(new VectorPolar(1,v.arg))
+    static normal(v){
+        //returns a unit Vector2d in the same direction as v with the same origin
+        return this.PolarToRect(new VectorPolar(1,v.arg, v.x0, v.y0))
     }
 
     static dot(v1,v2){
