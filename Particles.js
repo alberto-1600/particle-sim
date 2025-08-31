@@ -45,13 +45,28 @@ export class Particle{
     get ay(){return this.acc.y1}
     set ay(new_ay) {this.acc.y1 = new_ay}
 
-    static_collision(other){
-        //checks if two particles are overlapping (1)
+    particle_collision(other){
+        //checks if two particles are colliding
         //if so updates the positions of both particles so that they touching on their edge
         //done by shifting the two particles along the axis of their centers 
-        const distance = VM.subtract(this.pos, other.pos)
+       
+        const distance = VM.setOrigin(VM.subtract(other.pos,this.pos),this.pos)
+        distance.draw_vect()
+
         if(distance.mag < this.r+other.r){
-            console.log("static collision")
+            const penetration = (this.r+other.r)-distance.mag
+            //update this particle's position by half the penetration
+            const shift = new VectorPolar(
+                penetration/2,
+                distance.arg,
+                this.x1,
+                this.y1
+            )
+            const this_new_pos = VM.add(this.pos, VM.flip(shift))
+            this.pos = this_new_pos
+
+            const other_new_pos = VM.add(other.pos, shift)
+            other.pos = other_new_pos
         }
     }
 }

@@ -39,7 +39,7 @@ export class Vector2d{
         //draw the vector's head (arrow) using vectors
         const arrow_angle = Math.PI/10
         const arrow_lenght = 20
-        const arrow_line = VectorMath.phase_shift(VectorMath.scalar_mul(VectorMath.normal(VectorMath.opposite(this)),arrow_lenght),arrow_angle)
+        const arrow_line = VectorMath.phase_shift(VectorMath.scalar_mul(VectorMath.normal(VectorMath.flip(this)),arrow_lenght),arrow_angle)
         draw_line(arrow_line.x0, arrow_line.y0, arrow_line.x1, arrow_line.y1, "#000000ff")
         
         const arrow_line2 = VectorMath.simmetric(arrow_line, this)
@@ -72,7 +72,7 @@ export class VectorPolar{
         //draw the vector's head (arrow) using vectors
         const arrow_angle = Math.PI/10
         const arrow_lenght = 20
-        const arrow_line = VectorMath.phase_shift(VectorMath.scalar_mul(VectorMath.normal(VectorMath.opposite(this)),arrow_lenght),arrow_angle)
+        const arrow_line = VectorMath.phase_shift(VectorMath.scalar_mul(VectorMath.normal(VectorMath.flip(this)),arrow_lenght),arrow_angle)
         draw_line(arrow_line.x0, arrow_line.y0, arrow_line.x1, arrow_line.y1, "#000000ff")
         
         const arrow_line2 = VectorMath.simmetric(arrow_line, this)
@@ -138,7 +138,7 @@ export class VectorMath{
         )
     }
 
-    static opposite(v){
+    static flip(v){
         //returns the opposite of v (same angle and magnitude, but origin and end are swapped)
         return new Vector2d(v.x0,v.y0,v.x1,v.y1)
     }
@@ -153,7 +153,7 @@ export class VectorMath{
     }
 
     static subtract(v1,v2){
-        return this.add(v1, this.opposite(v2))
+        return this.add(v1, this.flip(v2))
     }
 
     static normal(v){
