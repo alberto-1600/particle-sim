@@ -24,12 +24,26 @@ export class Vector2d{
         this.y0 = y0
         this.x1 = x1 //ending point of the vector
         this.y1 = y1
+    }
+    
+    // Magnitude of the vector
+    get mag() { 
+        return Math.hypot(this.x1 - this.x0, this.y1 - this.y0); 
+    }
+    set mag(newMag) {
+        const angle = this.arg; // current angle
+        this.x1 = this.x0 + newMag * Math.cos(angle);
+        this.y1 = this.y0 + newMag * Math.sin(angle);
+    }
 
-        this.horizontal_component = this.x1-this.x0
-        this.vertical_component = this.y1-this.y0
-
-        this.mag = Math.sqrt((x0-x1)**2+(y0-y1)**2) //vector magnitude (lenght)
-        this.arg = Math.atan2((y1-y0),(x1-x0)) //vector argument (angle)
+    // Angle of the vector
+    get arg() { 
+        return Math.atan2(this.y1 - this.y0, this.x1 - this.x0); 
+    }
+    set arg(newArg) {
+        const magnitude = this.mag;
+        this.x1 = this.x0 + magnitude * Math.cos(newArg);
+        this.y1 = this.y0 + magnitude * Math.sin(newArg);
     }
 
     draw_vect(){
@@ -60,9 +74,6 @@ export class VectorPolar{
 
         this.x1 = this.mag*Math.cos(this.arg)+x0
         this.y1 = this.mag*Math.sin(this.arg)+y0
-
-        this.horizontal_component = this.x1-this.x0
-        this.vertical_component = this.y1-this.y0
     }
 
     draw_vect(){
@@ -131,10 +142,10 @@ export class VectorMath{
     static shift(v,v_shift){
         //returns a Vector2d that is v (Vector2d) shifted by v_shift (Vector2d)
         return new Vector2d(
-            v.x1+v_shift.horizontal_component,
-            v.y1+v_shift.vertical_component,
-            v.x0+v_shift.horizontal_component,
-            v.y0+v_shift.vertical_component 
+            v.x1+v_shift.x1-v_shift.x0,
+            v.y1+v_shift.y1-v_shift.y0,
+            v.x0+v_shift.x1-v_shift.x0,
+            v.y0+v_shift.y1-v_shift.y0
         )
     }
 
@@ -147,8 +158,10 @@ export class VectorMath{
         //v1,v2 can be both Vector2d and VectorPolar
         //returns a vector with origin at x0=0, y0=0 with components corresponding to the sum of components of v1 and v2
         return new Vector2d(
-            v1.horizontal_component+v2.horizontal_component,
-            v1.vertical_component+v2.vertical_component
+            (v1.x1 - v1.x0) + (v2.x1 - v2.x0),
+            (v1.y1 - v1.y0) + (v2.y1 - v2.y0),
+            0,
+            0
         )
     }
 

@@ -35,72 +35,55 @@ import { Vector2d, VectorMath as VM, VectorPolar } from "./Vectors.js";
 
 const particles = []
 
-const N=0
+const N=20
 for(let i=0; i<N;i++){
-    const x = Math.random()*(canvas.width-50)
-    const y = 250 //Math.random()*(canvas.height-50)
+    const x = Math.random()*(canvas.width-100)+50
+    const y = Math.random()*(canvas.height-100)+50
     const pos = new Vector2d(x,y)
 
-    const vx = (Math.random()-0.5)*5
-    const vy = 0// (Math.random()-0.5)
+    const vx = (Math.random()-0.5)
+    const vy = (Math.random()-0.5)*3
     const vel = new Vector2d(vx,vy)
 
     const ax = 0
     const ay = 0
     const acc = new Vector2d(ax,ay)
 
-    const r = 10
+    const r = 15
     const color = "#00ff00"
 
     const p = new Particle(pos,vel,acc,r,color)
     particles.push(p)
 }
 
-function update()
-{
-    clearCanvas()
-    
-    //for(let i=0; i<particles.length;i++){
-    //    let p0=particles[i]
-    //    //if(i==0){console.log(p0)}
-    //    p0.check_boundary_collision()
-    //    
-    //    for(let j=i+1; j<particles.length; j++){
-    //        let p1 = particles[j]
-    //        p0.check_particle_collision(p1)
-    //    }
-    //    p0.update_position()
-    //    p0.draw()
-    //}
+let timer = 0
+const cap = 0
+function update(){
+    if(timer<cap){
+        timer += 1
+        requestAnimationFrame(update)
+    }
+    else{
+        timer = 0
+        clearCanvas()
 
-    
+        //code goes here
+        for(let i=0; i<particles.length;i++){
+            particles[i].boundary_collision()
 
-    requestAnimationFrame(update)
+            for(let j=i+1; j<particles.length; j++){
+                particles[i].particle_collision(particles[j])
+            }
+
+            particles[i].update_position()
+            particles[i].draw()
+        }
+        //code ends here
+        requestAnimationFrame(update)
+    }
 }
 
-
-//update()
-let p0 = new Particle(
-    new Vector2d(100,200),
-    new Vector2d(10,10),
-    new Vector2d(0,0),
-    40,
-    "#FF000060"
-)
-
-let p1 = new Particle(
-    new Vector2d(179,200),
-    new Vector2d(10,10),
-    new Vector2d(0,0),
-    40,
-    "#0000FF60"
-)
-
-p0.draw()
-p1.draw()
-p0.particle_collision(p1)
-p0.draw()
-p1.draw()
+update()
 
 
 

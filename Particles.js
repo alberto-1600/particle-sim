@@ -44,16 +44,36 @@ export class Particle{
 
     get ay(){return this.acc.y1}
     set ay(new_ay) {this.acc.y1 = new_ay}
+  
+
+    update_position(){
+        const new_vel = VM.add(this.vel, this.acc) // new_vel += this.acc
+        const new_pos = VM.add(this.pos, this.vel) // new_pos += this.vel
+        
+        this.pos.x1 = new_pos.x1
+        this.pos.y1 = new_pos.y1
+        this.vel.x1 = new_vel.x1
+        this.vel.y1 = new_vel.y1
+    }
 
     particle_collision(other){
-        //checks if two particles are colliding
-        //if so updates the positions of both particles so that they touching on their edge
-        //done by shifting the two particles along the axis of their centers 
-       
+        //the particle-to-particle collision is handled in 3 steps:
+        // (1) check if the distance < sum of radii
+        // if (1)--->(2) fix the overlap that can happen between frames (positional correction)
+        //     after (2)--->(3) update velocities according to masses, momentum and energy
+        //
+        // all of this should only be calculated once per pair of particle,
+        // THIS SHOULD NEVER HAPPEN:
+        //      p0.particle_collision(p1)
+        //      p1.particle_collision(p0)
+        
+        //(1)
         const distance = VM.setOrigin(VM.subtract(other.pos,this.pos),this.pos)
-        distance.draw_vect()
-
         if(distance.mag < this.r+other.r){
+            //set masses to arbitrary value for velocities calculations
+            const m1 = this.r**2
+            const m2 = other.r**2
+            //(2) POSITIONAL CORRECTION
             const penetration = (this.r+other.r)-distance.mag
             //update this particle's position by half the penetration
             const shift = new VectorPolar(
@@ -63,10 +83,49 @@ export class Particle{
                 this.y1
             )
             const this_new_pos = VM.add(this.pos, VM.flip(shift))
-            this.pos = this_new_pos
+            this.pos.x1 = this_new_pos.x1;
+            this.pos.y1 = this_new_pos.y1;
 
             const other_new_pos = VM.add(other.pos, shift)
-            other.pos = other_new_pos
+            other.pos.x1 = other_new_pos.x1
+            other.pos.y1 = other_new_pos.y1
+
+            //(3) VELOCITIES UPDATE
+            let normal;
+            if (distance.mag === 0) {
+                normal = { x1: 1, y1: 1 }; // arbitrary
+            } else {
+                normal = VM.normal(distance)
+            }
+            // projects the velocities onto the normal vector
+            // only the velocities on the normal direction change on collision
+            const v1n = VM.dot(this.vel, normal)
+            const v2n = VM.dot(other.vel, normal)
+
+            // use conservation of momentum and kinetic energy to find the normal velocities after collision
+            const v1n_after = (v1n*(m1-m2)+2*m2*v2n)/(m1+m2)
+            const v2n_after = (v2n*(m2-m1)+2*m1*v1n)/(m1+m2)
+
+            // find how much the velocities change and use that to update the velocities
+            const v1_change = VM.scalar_mul(normal, v1n_after-v1n)
+            const v2_change = VM.scalar_mul(normal, v2n_after-v2n)
+
+            const new_vel = VM.add(this.vel, v1_change)
+            this.vel.x1 = new_vel.x1
+            this.vel.y1 = new_vel.y1
+
+            const other_new_vel = VM.add(other.vel, v2_change)
+            other.vel.x1 = other_new_vel.x1
+            other.vel.y1 = other_new_vel.y1
+        }
+    }
+
+    boundary_collision(){
+        if(this.pos.x1+this.r > canvas.width || this.pos.x1-this.r <= 0){
+            this.vel.x1 *= -1
+        }
+        if(this.pos.y1+this.r > canvas.height || this.pos.y1-this.r <= 0){
+            this.vel.y1 *= -1
         }
     }
 }
