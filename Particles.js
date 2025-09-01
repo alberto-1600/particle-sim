@@ -67,6 +67,7 @@ export class Particle{
         //      p0.particle_collision(p1)
         //      p1.particle_collision(p0)
         
+        const e = 1 //elasticity between particles (0: all energy is dissipated on contact 1: no energy is dissipated on contact)
         //(1)
         const distance = VM.setOrigin(VM.subtract(other.pos,this.pos),this.pos)
         if(distance.mag < this.r+other.r){
@@ -110,23 +111,41 @@ export class Particle{
             const v1_change = VM.scalar_mul(normal, v1n_after-v1n)
             const v2_change = VM.scalar_mul(normal, v2n_after-v2n)
 
-            const new_vel = VM.add(this.vel, v1_change)
+            const new_vel = VM.scalar_mul(VM.add(this.vel, v1_change),e)
             this.vel.x1 = new_vel.x1
             this.vel.y1 = new_vel.y1
 
-            const other_new_vel = VM.add(other.vel, v2_change)
+            const other_new_vel = VM.scalar_mul(VM.add(other.vel, v2_change),e)
             other.vel.x1 = other_new_vel.x1
             other.vel.y1 = other_new_vel.y1
         }
     }
 
     boundary_collision(){
-        let e = 0.5
-        if(this.pos.x1+this.r > canvas.width || this.pos.x1-this.r <= 0){
+        //NOTE: a better approach would be to check where the particle should be on the next frame based on it's velocity (so instead of just "sticking" the particle to the boundary, actually set its corrected position according to the speeds overall magnitude and direction)
+        //collision with the screen edge are handled in two steps (done separetly for x and y):
+        // (1) POSITIONAL CORRECTION: if the particle overlapped the boundary for any reason (mainly high speed/acceleration) it gets set back to the closest point in the boundary
+        // (2) VELOCITY UPDATE: after (1) the velocity is flipped to simulate bouncing
+        const ex = 0.9 //elasticity of walls 
+        const ey = 0.9
+        // X
+        if(this.pos.x1+this.r > canvas.width){
+            this.pos.x1 = canvas.height-this.r
             this.vel.x1 *= -1
         }
-        if(this.pos.y1+this.r > canvas.height || this.pos.y1-this.r <= 0){
-            this.vel.y1 *= -1*e
+        else if(this.pos.x1-this.r <= 0){
+            this.pos.x1 = this.r
+            this.vel.x1*=-1*ex
+        }
+
+        // Y
+        if(this.pos.y1+this.r > canvas.height){
+            this.pos.y1 = canvas.height-this.r
+            this.vel.y1 *= -1
+        }
+        else if(this.pos.y1-this.r <= 0){
+            this.pos.y1 = this.r
+            this.vel.y1 *= -1*ey
         }
     }
 }
