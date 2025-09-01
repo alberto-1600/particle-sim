@@ -63,7 +63,7 @@ const p0 = new Particle(
     new Vector2d(100,300),
     new Vector2d(0,0),
     new Vector2d(0,0),
-    15,
+    2,
     "#FF0000",
     1,
     new Vector2d(1,1)
@@ -71,9 +71,9 @@ const p0 = new Particle(
 
 const p1 = new Particle(
     new Vector2d(300,300),
+    new Vector2d(0,0.05),
     new Vector2d(0,0),
-    new Vector2d(0,0),
-    15,
+    50,
     "#00FF00",
     1,
     new Vector2d(1,1)
@@ -83,16 +83,16 @@ const p2 = new Particle(
     new Vector2d(500,300),
     new Vector2d(0,0),
     new Vector2d(0,0),
-    15,
+    2,
     "#0000ff",
     1,
     new Vector2d(1,1)
 )
 
+
 particles.push(p0)
 particles.push(p1)
 particles.push(p2)
-
 
 let timer = 0
 const cap = 0
@@ -106,9 +106,11 @@ function update(){
         clearCanvas()
 
         //code goes here
+        for(let p of particles){
+            p.acc.x1 = 0
+            p.acc.y1 = 0
+        }
         for(let i=0; i<particles.length;i++){
-            particles[i].acc.x1 = 0
-            particles[i].acc.y1 = 0
             particles[i].boundary_collision()
 
             for(let j=i+1; j<particles.length; j++){

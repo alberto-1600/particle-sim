@@ -51,7 +51,7 @@ export class Particle{
 
     update_position(){
         const new_vel = VM.add(this.vel, this.acc) // new_vel += this.acc
-        const new_pos = VM.add(this.pos, this.vel) // new_pos += this.vel
+        const new_pos = VM.add(this.pos, new_vel) // new_pos += this.vel
         
         this.pos.x1 = new_pos.x1
         this.pos.y1 = new_pos.y1
@@ -166,11 +166,9 @@ export class Particle{
         const this_force = VM.PolarToRect(new VectorPolar(force_mag, distance.arg))
         const other_force = VM.scalar_mul(VM.PolarToRect(new VectorPolar(force_mag, distance.arg)),-1)
         
-        this.acc.x1 += this_force.x1/m1;
-        this.acc.y1 += this_force.y1/m1;
-        other.acc.x1 += other_force.x1/m2;
-        other.acc.y1 += other_force.y1/m2;
-
-
+        this.acc.x1 += this_force.x1/m1
+        this.acc.y1 += this_force.y1/m1
+        other.acc.x1 += other_force.x1/m2
+        other.acc.y1 += other_force.y1/m2
     }
 }
