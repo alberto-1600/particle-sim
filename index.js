@@ -61,9 +61,9 @@ for(let i=0; i<N;i++){
 
 const p0 = new Particle(
     new Vector2d(100,300),
-    new Vector2d(0,0.5),
     new Vector2d(0,0),
-    10,
+    new Vector2d(0,0),
+    15,
     "#FF0000",
     1,
     new Vector2d(1,1)
@@ -73,17 +73,17 @@ const p1 = new Particle(
     new Vector2d(300,300),
     new Vector2d(0,0),
     new Vector2d(0,0),
-    30,
+    15,
     "#00FF00",
     1,
     new Vector2d(1,1)
 )
 
 const p2 = new Particle(
-    new Vector2d(150,150),
+    new Vector2d(500,300),
     new Vector2d(0,0),
     new Vector2d(0,0),
-    30,
+    15,
     "#0000ff",
     1,
     new Vector2d(1,1)
@@ -107,6 +107,8 @@ function update(){
 
         //code goes here
         for(let i=0; i<particles.length;i++){
+            particles[i].acc.x1 = 0
+            particles[i].acc.y1 = 0
             particles[i].boundary_collision()
 
             for(let j=i+1; j<particles.length; j++){
