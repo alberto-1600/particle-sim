@@ -121,11 +121,12 @@ export class Particle{
     }
 
     boundary_collision(){
+        let e = 0.5
         if(this.pos.x1+this.r > canvas.width || this.pos.x1-this.r <= 0){
             this.vel.x1 *= -1
         }
         if(this.pos.y1+this.r > canvas.height || this.pos.y1-this.r <= 0){
-            this.vel.y1 *= -1
+            this.vel.y1 *= -1*e
         }
     }
 }

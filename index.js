@@ -35,21 +35,21 @@ import { Vector2d, VectorMath as VM, VectorPolar } from "./Vectors.js";
 
 const particles = []
 
-const N=20
+const N=500
 for(let i=0; i<N;i++){
     const x = Math.random()*(canvas.width-100)+50
     const y = Math.random()*(canvas.height-100)+50
     const pos = new Vector2d(x,y)
 
     const vx = (Math.random()-0.5)
-    const vy = (Math.random()-0.5)*3
+    const vy = (Math.random()-0.5)
     const vel = new Vector2d(vx,vy)
 
-    const ax = 0
-    const ay = 0
+    const ax = 0.05
+    const ay = 0.05
     const acc = new Vector2d(ax,ay)
 
-    const r = 15
+    const r = 10
     const color = "#00ff00"
 
     const p = new Particle(pos,vel,acc,r,color)
