@@ -49,8 +49,8 @@ for(let i=0; i<N;i++){
     const ay = 0
     const acc = new Vector2d(ax,ay)
 
-    const r = 50
-    const color = "#00ff00"
+    const r = 20
+    const color = "#0000ff"
 
     const p_elasticity = 0.5
     const w_elasticity = new Vector2d(1,1)
@@ -60,39 +60,30 @@ for(let i=0; i<N;i++){
 }
 
 const p0 = new Particle(
-    new Vector2d(100,300),
+    new Vector2d(250,300),
+    new Vector2d(0.05,0),
     new Vector2d(0,0),
-    new Vector2d(0,0),
-    2,
-    "#FF0000",
+    20,
+    "#ff0000",
     1,
     new Vector2d(1,1)
 )
 
 const p1 = new Particle(
-    new Vector2d(300,300),
-    new Vector2d(0,0.05),
-    new Vector2d(0,0),
-    50,
-    "#00FF00",
-    1,
-    new Vector2d(1,1)
-)
-
-const p2 = new Particle(
-    new Vector2d(500,300),
+    new Vector2d(350,300),
     new Vector2d(0,0),
     new Vector2d(0,0),
-    2,
+    20,
     "#0000ff",
     1,
     new Vector2d(1,1)
 )
 
-
 particles.push(p0)
 particles.push(p1)
-particles.push(p2)
+
+//particles.push(p0)
+//particles.push(p1)
 
 let timer = 0
 const cap = 0
@@ -110,11 +101,14 @@ function update(){
             p.acc.x1 = 0
             p.acc.y1 = 0
         }
+        
         for(let i=0; i<particles.length;i++){
             particles[i].boundary_collision()
+            
 
             for(let j=i+1; j<particles.length; j++){
                 particles[i].particle_collision(particles[j])
+                particles[i].repulsive_force(particles[j])
                 particles[i].gravitational_force(particles[j])
             }
 

@@ -157,11 +157,14 @@ export class Particle{
         const m1 = this.r**2
         const m2 = other.r**2
 
-        const distance = VM.setOrigin(VM.subtract(other.pos,this.pos),this.pos) //R is the distance as a vector
+        //minimum distance that is used is set to the sum of radii so that if the balls overlap the radius cant go to 0 (which would result in an infinite force)
+        const distance = VM.setOrigin(VM.subtract(other.pos,this.pos),this.pos)
+        const minDist = this.r+other.r
+        const d = Math.max(distance.mag, minDist)
 
         const G = 0.1 //universal gravitational constant
 
-        const force_mag = G*(m1*m2)/(distance.mag**2) 
+        const force_mag = G*(m1*m2)/(d**2) 
 
         const this_force = VM.PolarToRect(new VectorPolar(force_mag, distance.arg))
         const other_force = VM.scalar_mul(VM.PolarToRect(new VectorPolar(force_mag, distance.arg)),-1)
@@ -170,5 +173,29 @@ export class Particle{
         this.acc.y1 += this_force.y1/m1
         other.acc.x1 += other_force.x1/m2
         other.acc.y1 += other_force.y1/m2
+    }
+
+    repulsive_force(other){
+        //pretty much same as gravitational force, but on the opposite direction
+
+        const m1 = this.r**2
+        const m2 = other.r**2
+
+        //minimum distance that is used is set to the sum of radii so that if the balls overlap the radius cant go to 0 (which would result in an infinite force)
+        const distance = VM.setOrigin(VM.subtract(other.pos,this.pos),this.pos)
+        const minDist = this.r+other.r
+        const d = Math.max(distance.mag, minDist)
+
+        const G = 0.2 //universal gravitational constant
+
+        const force_mag = G*(m1*m2)/(d**2) 
+
+        const this_force = VM.PolarToRect(new VectorPolar(force_mag, distance.arg))
+        const other_force = VM.scalar_mul(VM.PolarToRect(new VectorPolar(force_mag, distance.arg)),-1)
+        
+        this.acc.x1 -= this_force.x1/m1
+        this.acc.y1 -= this_force.y1/m1
+        other.acc.x1 -= other_force.x1/m2
+        other.acc.y1 -= other_force.y1/m2
     }
 }
