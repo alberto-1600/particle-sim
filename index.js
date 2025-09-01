@@ -35,29 +35,63 @@ import { Vector2d, VectorMath as VM, VectorPolar } from "./Vectors.js";
 
 const particles = []
 
-const N=500
+const N=0
 for(let i=0; i<N;i++){
     const x = Math.random()*(canvas.width-100)+50
     const y = Math.random()*(canvas.height-100)+50
     const pos = new Vector2d(x,y)
 
-    const vx = (Math.random()-0.5)*.5
-    const vy = (Math.random()-0.5)*.5
+    const vx = (Math.random()-0.5)*10
+    const vy = (Math.random()-0.5)*10
     const vel = new Vector2d(vx,vy)
 
     const ax = 0
     const ay = 0
     const acc = new Vector2d(ax,ay)
 
-    const r = 10
+    const r = 50
     const color = "#00ff00"
 
-    const p_elasticity = 1
+    const p_elasticity = 0.5
     const w_elasticity = new Vector2d(1,1)
 
     const p = new Particle(pos,vel,acc,r,color,p_elasticity, w_elasticity)
     particles.push(p)
 }
+
+const p0 = new Particle(
+    new Vector2d(100,300),
+    new Vector2d(0,0.5),
+    new Vector2d(0,0),
+    10,
+    "#FF0000",
+    1,
+    new Vector2d(1,1)
+)
+
+const p1 = new Particle(
+    new Vector2d(300,300),
+    new Vector2d(0,0),
+    new Vector2d(0,0),
+    30,
+    "#00FF00",
+    1,
+    new Vector2d(1,1)
+)
+
+const p2 = new Particle(
+    new Vector2d(150,150),
+    new Vector2d(0,0),
+    new Vector2d(0,0),
+    30,
+    "#0000ff",
+    1,
+    new Vector2d(1,1)
+)
+
+particles.push(p0)
+particles.push(p1)
+particles.push(p2)
 
 
 let timer = 0
@@ -77,6 +111,7 @@ function update(){
 
             for(let j=i+1; j<particles.length; j++){
                 particles[i].particle_collision(particles[j])
+                particles[i].gravitational_force(particles[j])
             }
 
             particles[i].update_position()

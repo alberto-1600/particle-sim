@@ -150,4 +150,26 @@ export class Particle{
             this.vel.y1 *= -1*ey
         }
     }
+
+    gravitational_force(other){
+        //when called, this method updates this particle's and the other particle's acceleration to match a gravitational pull between the two
+        //this should never be called twice for the same couple of particles (same as particle_collision())
+        const m1 = this.r**2
+        const m2 = other.r**2
+
+        const distance = VM.setOrigin(VM.subtract(other.pos,this.pos),this.pos) //R is the distance as a vector
+
+        const G = 0.1 //universal gravitational constant
+
+        const force_mag = G*(m1*m2)/(distance.mag**2) 
+
+        const this_force = VM.PolarToRect(new VectorPolar(force_mag, distance.arg))
+        const other_force = VM.scalar_mul(VM.PolarToRect(new VectorPolar(force_mag, distance.arg)),-1)
+        this.acc.x1 = this_force.x1/m1 //F=m*a thus a=F/m
+        this.acc.y1 = this_force.y1/m1
+
+        other.acc.x1 = other_force.x1/m2
+        other.acc.y1 = other_force.y1/m2
+
+    }
 }
