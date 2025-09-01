@@ -41,8 +41,8 @@ for(let i=0; i<N;i++){
     const y = Math.random()*(canvas.height-100)+50
     const pos = new Vector2d(x,y)
 
-    const vx = (Math.random()-0.5)*0.5
-    const vy = (Math.random()-0.5)*0.5
+    const vx = (Math.random()-0.5)*.5
+    const vy = (Math.random()-0.5)*.5
     const vel = new Vector2d(vx,vy)
 
     const ax = 0
@@ -52,19 +52,13 @@ for(let i=0; i<N;i++){
     const r = 10
     const color = "#00ff00"
 
-    const p = new Particle(pos,vel,acc,r,color)
+    const p_elasticity = 1
+    const w_elasticity = new Vector2d(1,1)
+
+    const p = new Particle(pos,vel,acc,r,color,p_elasticity, w_elasticity)
     particles.push(p)
 }
 
-const p0 = new Particle(
-    new Vector2d(500,300),
-    new Vector2d(2,2),
-    new Vector2d(0,0),
-    10,
-    "#FF0000"
-)
-
-particles.push(p0)
 
 let timer = 0
 const cap = 0

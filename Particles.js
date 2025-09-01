@@ -13,13 +13,16 @@ function circle(x,y,r,color="#000000"){
 }
 
 export class Particle{
-    constructor(pos,vel,acc,r,color){
+    constructor(pos, vel, acc, r, color, particle_elasticity, wall_elasticity){
         this.pos = pos //Vector2d with origin at (0,0) and points to the particle position
         this.vel = vel //Vector2d
         this.acc = acc //Vector2d
 
         this.r=r;
         this.color=color
+
+        this.p_elasticity = particle_elasticity //elasticity between particles (0: all energy is dissipated on contact 1: no energy is dissipated on contact)
+        this.w_elasticity = wall_elasticity //Vector2d. elasticity between walls and particles as a Vector2d to separate the vertical and horizontal boundaries
     }
     
     draw(){
@@ -67,7 +70,6 @@ export class Particle{
         //      p0.particle_collision(p1)
         //      p1.particle_collision(p0)
         
-        const e = 1 //elasticity between particles (0: all energy is dissipated on contact 1: no energy is dissipated on contact)
         //(1)
         const distance = VM.setOrigin(VM.subtract(other.pos,this.pos),this.pos)
         if(distance.mag < this.r+other.r){
@@ -111,11 +113,11 @@ export class Particle{
             const v1_change = VM.scalar_mul(normal, v1n_after-v1n)
             const v2_change = VM.scalar_mul(normal, v2n_after-v2n)
 
-            const new_vel = VM.scalar_mul(VM.add(this.vel, v1_change),e)
+            const new_vel = VM.scalar_mul(VM.add(this.vel, v1_change),this.p_elasticity)
             this.vel.x1 = new_vel.x1
             this.vel.y1 = new_vel.y1
 
-            const other_new_vel = VM.scalar_mul(VM.add(other.vel, v2_change),e)
+            const other_new_vel = VM.scalar_mul(VM.add(other.vel, v2_change),this.p_elasticity)
             other.vel.x1 = other_new_vel.x1
             other.vel.y1 = other_new_vel.y1
         }
@@ -126,8 +128,8 @@ export class Particle{
         //collision with the screen edge are handled in two steps (done separetly for x and y):
         // (1) POSITIONAL CORRECTION: if the particle overlapped the boundary for any reason (mainly high speed/acceleration) it gets set back to the closest point in the boundary
         // (2) VELOCITY UPDATE: after (1) the velocity is flipped to simulate bouncing
-        const ex = 0.9 //elasticity of walls 
-        const ey = 0.9
+        const ex = this.w_elasticity.x1 //elasticity of walls 
+        const ey = this.w_elasticity.y1
         // X
         if(this.pos.x1+this.r > canvas.width){
             this.pos.x1 = canvas.height-this.r
