@@ -207,11 +207,11 @@ export class Particle{
 
         //this method joins two particles with a spring with the specified constants
         const L0 = 200 //spring lenght at rest
-        const k = 1 //elastic coefficient (stiffness)
+        const k = .1 //elastic coefficient (stiffness)
         const F_spring = VM.scalar_mul(Normal, k*(distance.mag-L0)) //force of the spring
         
         const mu = (m1*m2)/(m1+m2)
-        const c = 2*Math.sqrt(k*mu)*0.2
+        const c = 2*Math.sqrt(k*mu)*0.1
         const v_rel = VM.subtract(other.vel, this.vel)
         const v_rel_normal = VM.dot(v_rel, Normal)
         const F_damp = VM.scalar_mul(Normal, -c*v_rel_normal)

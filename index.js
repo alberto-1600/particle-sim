@@ -1,6 +1,32 @@
 const canvas = document.getElementById("canvas1");
 const ctx = canvas.getContext("2d")
 
+//chart data string 
+const chartData = {
+    labels: [],  // time/frame
+    datasets: [{
+        label: "Distance between particles",
+        data: [],
+        borderColor: "blue",
+        fill: false,
+        tension: 0.1
+    }]
+};
+const ctx_charts = document.getElementById("distanceChart").getContext("2d");
+const distanceChart = new Chart(ctx_charts, {
+    type: "line",
+    data: chartData,
+    options: {
+        animation: false,  // disable animation for real-time updates
+        scales: {
+            x: { title: { display: true, text: "Frame" } },
+            y: { title: { display: true, text: "Distance" } }
+        }
+    }
+});
+
+
+
 //Canvas outline
 function canvasOutline(){
     ctx.strokeStyle = "black";
@@ -86,7 +112,7 @@ particles.push(p1)
 //particles.push(p1)
 
 let timer = 0
-const cap = 20
+const cap = 0
 function update(){
     if(timer<cap){
         timer += 1
@@ -115,6 +141,26 @@ function update(){
             particles[i].update_position()
             particles[i].draw()
         }
+
+        //distance logging on the chart 
+        // Example: log distance between particle 0 and particle 1
+        if (particles.length >= 2) {
+            const delta = VM.subtract(particles[1].pos, particles[0].pos);
+            const dist = delta.mag;
+
+            chartData.labels.push(timer);  // or frame count
+            chartData.datasets[0].data.push(dist);
+
+            // Limit the number of points to avoid slowing down
+            const maxPoints = 500;
+            if (chartData.labels.length > maxPoints) {
+                chartData.labels.shift();
+                chartData.datasets[0].data.shift();
+            }
+
+            distanceChart.update();  // refresh the chart
+        }
+
         //code ends here
         requestAnimationFrame(update)
     }
