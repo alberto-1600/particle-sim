@@ -86,7 +86,7 @@ for(let i=0; i<N;i++){
 }
 
 const p0 = new Particle(
-    new Vector2d(250,300),
+    new Vector2d(100,300),
     new Vector2d(0,0),
     new Vector2d(0,0),
     20,
@@ -96,7 +96,7 @@ const p0 = new Particle(
 )
 
 const p1 = new Particle(
-    new Vector2d(455,300),
+    new Vector2d(500,300),
     new Vector2d(0,0),
     new Vector2d(0,0),
     20,
@@ -108,62 +108,43 @@ const p1 = new Particle(
 particles.push(p0)
 particles.push(p1)
 
-//particles.push(p0)
-//particles.push(p1)
-
-let timer = 0
-const cap = 0
+const steps = 10
 function update(){
-    if(timer<cap){
-        timer += 1
-        requestAnimationFrame(update)
-    }
-    else{
-        timer = 0
-        clearCanvas()
+    clearCanvas()
 
-        //code goes here
-        for(let p of particles){
-            p.acc.x1 = 0
-            p.acc.y1 = 0
+    //code goes here
+    // 0. substeps for loop
+    for (let step = 0; step < steps; step++) {
+        // 1. reset accelerations
+        for (let p of particles) {
+            p.acc.x1 = 0;
+            p.acc.y1 = 0;
         }
-        
-        for(let i=0; i<particles.length;i++){
-            particles[i].boundary_collision()
-            
 
-            for(let j=i+1; j<particles.length; j++){
-                particles[i].particle_collision(particles[j])
-                particles[i].spring_force(particles[j])
-                //particles[i].gravitational_force(particles[j])
+        // 2. apply forces & collisions
+        for (let i = 0; i < particles.length; i++) {
+            particles[i].boundary_collision();
+
+            for (let j = i + 1; j < particles.length; j++) {
+                particles[i].particle_collision(particles[j]);
+                // particles[i].spring_force(particles[j]);
+                // particles[i].gravitational_force(particles[j]);
             }
-
-            particles[i].update_position()
-            particles[i].draw()
         }
 
-        //distance logging on the chart 
-        // Example: log distance between particle 0 and particle 1
-        if (particles.length >= 2) {
-            const delta = VM.subtract(particles[1].pos, particles[0].pos);
-            const dist = delta.mag;
-
-            chartData.labels.push(timer);  // or frame count
-            chartData.datasets[0].data.push(dist);
-
-            // Limit the number of points to avoid slowing down
-            const maxPoints = 2000;
-            if (chartData.labels.length > maxPoints) {
-                chartData.labels.shift();
-                chartData.datasets[0].data.shift();
-            }
-
-            distanceChart.update();  // refresh the chart
+        // 3. integrate positions
+        for (let p of particles) {
+            p.update_position(1/steps); // dt = 0.1
         }
-
-        //code ends here
-        requestAnimationFrame(update)
     }
+
+    // 4. draw after finishing all substeps
+    for (let p of particles) {
+        p.draw();
+    }
+
+    //code ends here
+    requestAnimationFrame(update)
 }
 
 update()

@@ -49,15 +49,15 @@ export class Particle{
     set ay(new_ay) {this.acc.y1 = new_ay}
   
 
-    update_position(){
-        const new_vel = VM.add(this.vel, this.acc) // new_vel += this.acc
-        const new_pos = VM.add(this.pos, new_vel) // new_pos += this.vel
-        
-        this.pos.x1 = new_pos.x1
-        this.pos.y1 = new_pos.y1
-        this.vel.x1 = new_vel.x1
-        this.vel.y1 = new_vel.y1
+    update_position(dt){
+        // Semi-implicit Euler: update velocity first, then position
+        this.vel.x1 += this.acc.x1 * dt;
+        this.vel.y1 += this.acc.y1 * dt;
+
+        this.pos.x1 += this.vel.x1 * dt;
+        this.pos.y1 += this.vel.y1 * dt;
     }
+
 
     particle_collision(other){
         //the particle-to-particle collision is handled in 3 steps:
@@ -197,35 +197,5 @@ export class Particle{
         this.acc.y1 -= this_force.y1/m1
         other.acc.x1 -= other_force.x1/m2
         other.acc.y1 -= other_force.y1/m2
-    }
-
-    spring_force(other){
-        const distance = VM.setOrigin(VM.subtract(other.pos,this.pos),this.pos)
-        const Normal = VM.normal(distance) //distance normal to keep track of direction
-        const m1 = this.r**2
-        const m2 = other.r**2
-
-        //this method joins two particles with a spring with the specified constants
-        const L0 = 200 //spring lenght at rest
-        const k = .1 //elastic coefficient (stiffness)
-        const F_spring = VM.scalar_mul(Normal, k*(distance.mag-L0)) //force of the spring
-        
-        const mu = (m1*m2)/(m1+m2)
-        const c = 2*Math.sqrt(k*mu)*0.1
-        const v_rel = VM.subtract(other.vel, this.vel)
-        const v_rel_normal = VM.dot(v_rel, Normal)
-        const F_damp = VM.scalar_mul(Normal, -c*v_rel_normal)
-
-        const F_tot = VM.add(F_spring, F_damp)
-
-        VM.setOrigin(F_tot, new Vector2d(100,100)).draw_vect()
-
-        this.acc.x1 += F_tot.x1/m1
-        this.acc.y1 += F_tot.y1/m1
-        other.acc.x1 += -F_tot.x1/m2
-        other.acc.y1 += -F_tot.y1/m2
-
-        distance.draw_vect()
-        console.log(distance.mag)
     }
 }
