@@ -61,7 +61,7 @@ for(let i=0; i<N;i++){
 
 const p0 = new Particle(
     new Vector2d(250,300),
-    new Vector2d(0.05,0),
+    new Vector2d(0,0),
     new Vector2d(0,0),
     20,
     "#ff0000",
@@ -70,7 +70,7 @@ const p0 = new Particle(
 )
 
 const p1 = new Particle(
-    new Vector2d(350,300),
+    new Vector2d(455,300),
     new Vector2d(0,0),
     new Vector2d(0,0),
     20,
@@ -86,7 +86,7 @@ particles.push(p1)
 //particles.push(p1)
 
 let timer = 0
-const cap = 0
+const cap = 20
 function update(){
     if(timer<cap){
         timer += 1
@@ -108,8 +108,8 @@ function update(){
 
             for(let j=i+1; j<particles.length; j++){
                 particles[i].particle_collision(particles[j])
-                particles[i].repulsive_force(particles[j])
-                particles[i].gravitational_force(particles[j])
+                particles[i].spring_force(particles[j])
+                //particles[i].gravitational_force(particles[j])
             }
 
             particles[i].update_position()
