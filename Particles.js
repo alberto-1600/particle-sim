@@ -58,6 +58,11 @@ export class Particle{
         this.pos.y1 += this.vel.y1 * dt;
     }
 
+    add_force(F){
+        this.acc.x1 += F.x1/this.r**2
+        this.acc.y1 += F.y1/this.r**2
+    }
+
 
     particle_collision(other){
         //the particle-to-particle collision is handled in 3 steps:

@@ -58,6 +58,7 @@ function circle(x,y,r,color="#000000"){
 //test
 import { Particle } from "./Particles.js";
 import { Vector2d, VectorMath as VM, VectorPolar } from "./Vectors.js";
+import {Spring} from "./Springs.js"
 
 const particles = []
 
@@ -86,7 +87,7 @@ for(let i=0; i<N;i++){
 }
 
 const p0 = new Particle(
-    new Vector2d(100,300),
+    new Vector2d(200,300),
     new Vector2d(0,0),
     new Vector2d(0,0),
     20,
@@ -96,7 +97,7 @@ const p0 = new Particle(
 )
 
 const p1 = new Particle(
-    new Vector2d(500,300),
+    new Vector2d(600,300),
     new Vector2d(0,0),
     new Vector2d(0,0),
     20,
@@ -105,8 +106,23 @@ const p1 = new Particle(
     new Vector2d(1,1)
 )
 
+const p2 = new Particle(
+    new Vector2d(300,60),
+    new Vector2d(0,1),
+    new Vector2d(0,0),
+    50,
+    "#00ff00",
+    1,
+    new Vector2d(1,1)
+)
+
+const S0 = new Spring(p0,p1,100,500,450)
+const S1 = new Spring(p1,p2,100,500,450)
+const S2 = new Spring(p2,p0,100,500,450)
+
 particles.push(p0)
 particles.push(p1)
+particles.push(p2)
 
 const steps = 10
 function update(){
@@ -118,8 +134,12 @@ function update(){
         // 1. reset accelerations
         for (let p of particles) {
             p.acc.x1 = 0;
-            p.acc.y1 = 0;
+            p.acc.y1 = 0.05;
         }
+
+        S0.add_spring_forces_to_particles()
+        S1.add_spring_forces_to_particles()
+        S2.add_spring_forces_to_particles()
 
         // 2. apply forces & collisions
         for (let i = 0; i < particles.length; i++) {

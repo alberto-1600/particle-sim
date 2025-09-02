@@ -68,12 +68,31 @@ export class VectorPolar{
     constructor(mag, arg,x0=0,y0=0){
         this.x0 = x0
         this.y0 = y0
-        
-        this.mag = mag
-        this.arg = arg
 
-        this.x1 = this.mag*Math.cos(this.arg)+x0
-        this.y1 = this.mag*Math.sin(this.arg)+y0
+        this.x1 = mag*Math.cos(arg)+x0
+        this.y1 = mag*Math.sin(arg)+y0
+    }
+
+    // Magnitude of the vector
+    get mag() { 
+        return Math.hypot(this.x1 - this.x0, this.y1 - this.y0); 
+    }
+
+    set mag(newMag) {
+        const angle = this.arg; // current angle
+        this.x1 = this.x0 + newMag * Math.cos(angle);
+        this.y1 = this.y0 + newMag * Math.sin(angle);
+    }
+
+    // Angle of the vector
+    get arg() { 
+        return Math.atan2(this.y1 - this.y0, this.x1 - this.x0); 
+    }
+
+    set arg(newArg) {
+        const magnitude = this.mag;
+        this.x1 = this.x0 + magnitude * Math.cos(newArg);
+        this.y1 = this.y0 + magnitude * Math.sin(newArg);
     }
 
     draw_vect(){
