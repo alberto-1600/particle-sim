@@ -152,7 +152,7 @@ function update(){
             chartData.datasets[0].data.push(dist);
 
             // Limit the number of points to avoid slowing down
-            const maxPoints = 500;
+            const maxPoints = 2000;
             if (chartData.labels.length > maxPoints) {
                 chartData.labels.shift();
                 chartData.datasets[0].data.shift();
