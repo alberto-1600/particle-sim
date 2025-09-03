@@ -1,5 +1,25 @@
 import { Vector2d, VectorPolar, VectorMath as VM} from "./Vectors.js"
 
+const canvas = document.getElementById("canvas1");
+const ctx = canvas.getContext("2d")
+
+function draw_line(x0,y0,x1,y1,color){
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 0.3;
+    ctx.beginPath()
+    ctx.moveTo(x0,y0)
+    ctx.lineTo(x1,y1)
+    ctx.closePath()
+    ctx.stroke()
+}
+
+function draw_circle(x,y,r,color="#000000"){
+    ctx.beginPath();
+    ctx.arc(x,y,r,0,Math.PI*2)
+    ctx.fillStyle = color
+    ctx.fill()
+}
+
 export class Spring{
     constructor(p0, p1, L0, k, c){
         this.p0 = p0 // start particle
@@ -7,6 +27,22 @@ export class Spring{
         this.L0 = L0 // lenght at rest
         this.k = k //stiffness coefficient
         this.c = c //damping coefficient
+    }
+
+    draw_spring(){
+        //const L0 = this.L0
+        const L = VM.subtract(this.p1.pos, this.p0.pos).mag
+        const circles_num = 3
+        const l = L/circles_num //how much space between two circles
+        console.log()
+        const unit_dir = VM.normal(new Vector2d(this.p1.pos.x1, this.p1.pos.y1, this.p0.pos.x1, this.p0.pos.y1))
+        for(let i=1; i<circles_num; i++){
+            const x = VM.scalar_mul(unit_dir, l*i).x1
+            const y = VM.scalar_mul(unit_dir, l*i).y1
+            draw_circle(x,y,5,"#000000")
+        }
+
+        draw_line(this.p0.pos.x1, this.p0.pos.y1, this.p1.pos.x1, this.p1.pos.y1)
     }
 
     add_spring_forces_to_particles(){

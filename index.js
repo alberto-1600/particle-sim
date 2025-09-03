@@ -88,9 +88,9 @@ for(let i=0; i<N;i++){
 
 const p0 = new Particle(
     new Vector2d(200,300),
+    new Vector2d(0,1),
     new Vector2d(0,0),
-    new Vector2d(0,0),
-    20,
+    10,
     "#ff0000",
     1,
     new Vector2d(1,1)
@@ -100,29 +100,69 @@ const p1 = new Particle(
     new Vector2d(600,300),
     new Vector2d(0,0),
     new Vector2d(0,0),
-    20,
+    10,
     "#0000ff",
     1,
     new Vector2d(1,1)
 )
 
 const p2 = new Particle(
-    new Vector2d(300,60),
-    new Vector2d(0,1),
+    new Vector2d(100,300),
+    new Vector2d(4,0),
     new Vector2d(0,0),
-    50,
+    30,
     "#00ff00",
     1,
     new Vector2d(1,1)
 )
 
-const S0 = new Spring(p0,p1,100,500,450)
-const S1 = new Spring(p1,p2,100,500,450)
-const S2 = new Spring(p2,p0,100,500,450)
+const p3 = new Particle(
+    new Vector2d(200,60),
+    new Vector2d(0,0),
+    new Vector2d(0,0),
+    10,
+    "#ffff00",
+    1,
+    new Vector2d(1,1)
+)
+
+const p4 = new Particle(
+    new Vector2d(100,60),
+    new Vector2d(0,0),
+    new Vector2d(0,0),
+    10,
+    "#00ffff",
+    1,
+    new Vector2d(1,1)
+)
 
 particles.push(p0)
 particles.push(p1)
 particles.push(p2)
+//particles.push(p3)
+//particles.push(p4)
+
+
+const springs = []
+
+const S0 = new Spring(p0,p1,200,1,3)
+//const S1 = new Spring(p1,p2,100,300,290)
+//const S2 = new Spring(p2,p3,100,300,290)
+//const S3 = new Spring(p3,p0,100,300,290)
+//
+//const S4 = new Spring(p0,p4,70,300,290)
+//const S5 = new Spring(p1,p4,70,300,290)
+//const S6 = new Spring(p2,p4,70,300,290)
+//const S7 = new Spring(p3,p4,70,300,290)
+
+springs.push(S0)
+//springs.push(S1)
+//springs.push(S2)
+//springs.push(S3)
+//springs.push(S4)
+//springs.push(S5)
+//springs.push(S6)
+//springs.push(S7)
 
 const steps = 10
 function update(){
@@ -134,12 +174,12 @@ function update(){
         // 1. reset accelerations
         for (let p of particles) {
             p.acc.x1 = 0;
-            p.acc.y1 = 0.05;
+            p.acc.y1 = 0;
         }
 
-        S0.add_spring_forces_to_particles()
-        S1.add_spring_forces_to_particles()
-        S2.add_spring_forces_to_particles()
+        for (let s of springs){
+            s.add_spring_forces_to_particles()
+        }
 
         // 2. apply forces & collisions
         for (let i = 0; i < particles.length; i++) {
@@ -147,8 +187,7 @@ function update(){
 
             for (let j = i + 1; j < particles.length; j++) {
                 particles[i].particle_collision(particles[j]);
-                // particles[i].spring_force(particles[j]);
-                // particles[i].gravitational_force(particles[j]);
+                //particles[i].gravitational_force(particles[j]);
             }
         }
 
@@ -161,6 +200,10 @@ function update(){
     // 4. draw after finishing all substeps
     for (let p of particles) {
         p.draw();
+    }
+
+    for (let s of springs) {
+        s.draw_spring();
     }
 
     //code ends here
