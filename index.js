@@ -61,22 +61,23 @@ import { Vector2d, VectorMath as VM, VectorPolar } from "./Vectors.js";
 import {Spring} from "./Springs.js"
 
 const particles = []
+const springs = []
 
-const N=500
+const N=10000
 for(let i=0; i<N;i++){
     const x = Math.random()*(canvas.width-100)+50
     const y = Math.random()*(canvas.height-100)+50
     const pos = new Vector2d(x,y)
 
-    const vx = (Math.random()-0.5)*10
-    const vy = (Math.random()-0.5)*10
+    const vx = (Math.random()-0.5)*6
+    const vy = (Math.random()-0.5)*6
     const vel = new Vector2d(vx,vy)
 
     const ax = 0
     const ay = 0
     const acc = new Vector2d(ax,ay)
 
-    const r = 2
+    const r = 1
     const color = "#0000ff"
 
     const p_elasticity = 1
@@ -86,84 +87,18 @@ for(let i=0; i<N;i++){
     particles.push(p)
 }
 
-const p0 = new Particle(
-    new Vector2d(200,300),
-    new Vector2d(0,1),
-    new Vector2d(0,0),
-    10,
-    "#ff0000",
-    1,
-    new Vector2d(1,1)
-)
+let filtered_clumps = {}
 
-const p1 = new Particle(
-    new Vector2d(600,300),
-    new Vector2d(0,0),
-    new Vector2d(0,0),
-    10,
-    "#0000ff",
-    1,
-    new Vector2d(1,1)
-)
-
-const p2 = new Particle(
-    new Vector2d(100,300),
-    new Vector2d(4,0),
-    new Vector2d(0,0),
-    10,
-    "#00ff00",
-    1,
-    new Vector2d(1,1)
-)
-
-const p3 = new Particle(
-    new Vector2d(200,60),
-    new Vector2d(0,0),
-    new Vector2d(0,0),
-    10,
-    "#ffff00",
-    1,
-    new Vector2d(1,1)
-)
-
-const p4 = new Particle(
-    new Vector2d(100,60),
-    new Vector2d(0,0),
-    new Vector2d(0,0),
-    10,
-    "#00ffff",
-    1,
-    new Vector2d(1,1)
-)
-
-const p5 = new Particle(
-    new Vector2d(200,160),
-    new Vector2d(0,0),
-    new Vector2d(0,0),
-    10,
-    "#ff00ff",
-    1,
-    new Vector2d(1,1)
-)
-
-particles.push(p0)
-particles.push(p1)
-particles.push(p2)
-particles.push(p3)
-particles.push(p4)
-particles.push(p5)
-
-
-const springs = []
-
-
-const steps = 10
+const steps = 2
+const column_width = 2
+const row_height = 2
 function update(){
     clearCanvas()
 
     //code goes here
     // 0. substeps for loop
     for (let step = 0; step < steps; step++) {
+        filtered_clumps = {}
         // 1. reset accelerations
         for (let p of particles) {
             p.acc.x1 = 0;
@@ -176,14 +111,45 @@ function update(){
         }
 
         // 2. apply forces & collisions
-        for (let i = 0; i < particles.length; i++) {
-            particles[i].boundary_collision();
 
-            for (let j = i + 1; j < particles.length; j++) {
-                particles[i].particle_collision(particles[j]);
-                particles[i].gravitational_force(particles[j]);
+        //filter particles
+        for(let p of particles){
+            const grid_x = Math.floor(p.pos.x1/column_width) 
+            const grid_y = Math.floor(p.pos.y1/row_height)
+            const key = `${grid_x},${grid_y}`
+            if(!filtered_clumps[key]){
+                filtered_clumps[key] = []
+            }
+            filtered_clumps[key].push(p)
+            p.boundary_collision()
+        }
+        
+        //collision check divided in clumps
+        for(let key in filtered_clumps){
+            const [gx,gy] = key.split(",").map(Number)
+
+            let neighbors = []
+            const neighbors_indexes = [
+                `${gx},${gy}`, //same
+                `${gx+1},${gy}`, //right
+                `${gx+1},${gy+1}`, //down right
+                `${gx},${gy+1}`, //down
+                `${gx-1},${gy+1}` //down-left
+            ]
+            for(let index of neighbors_indexes){
+                if(filtered_clumps[index]){
+                    neighbors.push(filtered_clumps[index])
+                }
+            }
+            const neighbors_flat = neighbors.flat()
+            for (let i = 0; i < neighbors_flat.length; i++) {
+                for (let j = i + 1; j < neighbors_flat.length; j++) {
+                    neighbors_flat[i].particle_collision(neighbors_flat[j]);
+                }
             }
         }
+
+
         //...TO HERE
 
         // 3. integrate positions
