@@ -5,7 +5,7 @@ const ctx = canvas.getContext("2d")
 
 function draw_line(x0,y0,x1,y1,color){
     ctx.strokeStyle = color;
-    ctx.lineWidth = 0.3;
+    ctx.lineWidth = 0.4;
     ctx.beginPath()
     ctx.moveTo(x0,y0)
     ctx.lineTo(x1,y1)
@@ -32,17 +32,30 @@ export class Spring{
     draw_spring(){
         //const L0 = this.L0
         const L = VM.subtract(this.p1.pos, this.p0.pos).mag
-        const circles_num = 3
-        const l = L/circles_num //how much space between two circles
-        console.log()
+        const l = 7 //how much space between two coils
+        const density = Math.round(L/l) // density of the spring coils
         const unit_dir = VM.normal(new Vector2d(this.p1.pos.x1, this.p1.pos.y1, this.p0.pos.x1, this.p0.pos.y1))
-        for(let i=1; i<circles_num; i++){
-            const x = VM.scalar_mul(unit_dir, l*i).x1
-            const y = VM.scalar_mul(unit_dir, l*i).y1
-            draw_circle(x,y,5,"#000000")
+        const unit_dir_ort = VM.orthogonal(unit_dir) //orthogonal to the vector connecting p0 to p1 with oriugin in p0
+        const H = 6 //width of the spring
+        const ort_scaled = VM.scalar_mul(unit_dir_ort, H)
+        let old_start_point = null
+
+        for(let i=0; i<density+1; i++){
+            const dir_scaled = VM.scalar_mul(unit_dir,l*i) // this is a vector pointing from p0 to p1, with a lenght corresponding to a joint of the spring (try using .draw_vect() to visualize)
+
+            //draw "straight" coils
+            const start_point =  VM.add(VM.add(ort_scaled, dir_scaled),this.p0.pos)
+            const end_point = VM.add(start_point, VM.scalar_mul(ort_scaled,-2))
+            draw_line(start_point.x1, start_point.y1, end_point.x1, end_point.y1)
+            
+            //finally we draw the "diagonal" coils that go from the current straight coil end pos to the next straight coil start pos
+            if(i!=0 && i!=density+1){
+                draw_line(end_point.x1, end_point.y1, old_start_point.x1, old_start_point.y1)
+            }
+            old_start_point = start_point
         }
 
-        draw_line(this.p0.pos.x1, this.p0.pos.y1, this.p1.pos.x1, this.p1.pos.y1)
+        //draw_line(this.p0.pos.x1, this.p0.pos.y1, this.p1.pos.x1, this.p1.pos.y1)
     }
 
     add_spring_forces_to_particles(){

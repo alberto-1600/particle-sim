@@ -62,7 +62,7 @@ import {Spring} from "./Springs.js"
 
 const particles = []
 
-const N=0
+const N=500
 for(let i=0; i<N;i++){
     const x = Math.random()*(canvas.width-100)+50
     const y = Math.random()*(canvas.height-100)+50
@@ -76,10 +76,10 @@ for(let i=0; i<N;i++){
     const ay = 0
     const acc = new Vector2d(ax,ay)
 
-    const r = 20
+    const r = 2
     const color = "#0000ff"
 
-    const p_elasticity = 0.5
+    const p_elasticity = 1
     const w_elasticity = new Vector2d(1,1)
 
     const p = new Particle(pos,vel,acc,r,color,p_elasticity, w_elasticity)
@@ -110,7 +110,7 @@ const p2 = new Particle(
     new Vector2d(100,300),
     new Vector2d(4,0),
     new Vector2d(0,0),
-    30,
+    10,
     "#00ff00",
     1,
     new Vector2d(1,1)
@@ -136,33 +136,26 @@ const p4 = new Particle(
     new Vector2d(1,1)
 )
 
+const p5 = new Particle(
+    new Vector2d(200,160),
+    new Vector2d(0,0),
+    new Vector2d(0,0),
+    10,
+    "#ff00ff",
+    1,
+    new Vector2d(1,1)
+)
+
 particles.push(p0)
 particles.push(p1)
 particles.push(p2)
-//particles.push(p3)
-//particles.push(p4)
+particles.push(p3)
+particles.push(p4)
+particles.push(p5)
 
 
 const springs = []
 
-const S0 = new Spring(p0,p1,200,1,3)
-//const S1 = new Spring(p1,p2,100,300,290)
-//const S2 = new Spring(p2,p3,100,300,290)
-//const S3 = new Spring(p3,p0,100,300,290)
-//
-//const S4 = new Spring(p0,p4,70,300,290)
-//const S5 = new Spring(p1,p4,70,300,290)
-//const S6 = new Spring(p2,p4,70,300,290)
-//const S7 = new Spring(p3,p4,70,300,290)
-
-springs.push(S0)
-//springs.push(S1)
-//springs.push(S2)
-//springs.push(S3)
-//springs.push(S4)
-//springs.push(S5)
-//springs.push(S6)
-//springs.push(S7)
 
 const steps = 10
 function update(){
@@ -177,6 +170,7 @@ function update(){
             p.acc.y1 = 0;
         }
 
+        // ADD ALL FORCES FROM HERE...
         for (let s of springs){
             s.add_spring_forces_to_particles()
         }
@@ -187,9 +181,10 @@ function update(){
 
             for (let j = i + 1; j < particles.length; j++) {
                 particles[i].particle_collision(particles[j]);
-                //particles[i].gravitational_force(particles[j]);
+                particles[i].gravitational_force(particles[j]);
             }
         }
+        //...TO HERE
 
         // 3. integrate positions
         for (let p of particles) {
@@ -198,13 +193,14 @@ function update(){
     }
 
     // 4. draw after finishing all substeps
+    for (let s of springs) {
+        s.draw_spring();
+    }
+
     for (let p of particles) {
         p.draw();
     }
 
-    for (let s of springs) {
-        s.draw_spring();
-    }
 
     //code ends here
     requestAnimationFrame(update)
