@@ -1,32 +1,60 @@
 const canvas = document.getElementById("canvas1");
 const ctx = canvas.getContext("2d")
+const fpsDisplay = document.getElementById("fps")
 
-//chart data string 
-const chartData = {
-    labels: [],  // time/frame
-    datasets: [{
-        label: "Distance between particles",
-        data: [],
-        borderColor: "blue",
-        fill: false,
-        tension: 0.1
-    }]
-};
-const ctx_charts = document.getElementById("distanceChart").getContext("2d");
-const distanceChart = new Chart(ctx_charts, {
+const maxSamples = 100 // how many elements to show on the chart (this is also how many fps measures we use to find the average)
+const ctxChart = document.getElementById("fpsChart").getContext("2d");
+const fpsChart = new Chart(ctxChart, {
     type: "line",
-    data: chartData,
+    data: {
+        labels: Array(maxSamples).fill(''), // placeholder labels
+        datasets: [
+            {
+                label: 'Average FPS',
+                data: Array(maxSamples).fill(0),
+                borderColor: 'red',
+                borderWidth: 2,
+                fill: false,
+                tension: 0.2,
+                pointRadius: 0
+            },
+            {
+                label: 'FPS',
+                data: Array(maxSamples).fill(0),
+                borderColor: "black",
+                borderWidth: 0.5,
+                fill: false,
+                tension: 0.2,
+                pointRadius: 0
+            },
+            {
+                label: 'average SPS',
+                data: Array(maxSamples).fill(0),
+                borderColor: "lime",
+                borderWidth: 2,
+                fill: false,
+                tension: 0.2,
+                pointRadius: 0
+            }
+        ]
+    },
     options: {
-        animation: false,  // disable animation for real-time updates
+        animation: false,
+        responsive: false,
         scales: {
-            x: { title: { display: true, text: "Frame" } },
-            y: { title: { display: true, text: "Distance" } }
-        }
+            y: { 
+                beginAtZero: true,
+                position: "right"
+            }
+        },
+        plugins: { 
+            legend: { 
+                display: true 
+            } }
     }
 });
 
-
-
+//HELPER FUNCTIONS TO DRAW
 //Canvas outline
 function canvasOutline(){
     ctx.strokeStyle = "black";
@@ -45,15 +73,7 @@ function clearCanvas(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     canvasOutline()
 }
-clearCanvas()
 
-//Function to draw circles on a single call
-function circle(x,y,r,color="#000000"){
-    ctx.beginPath();
-    ctx.arc(x,y,r,0,Math.PI*2)
-    ctx.fillStyle = color
-    ctx.fill()
-}
 
 //test
 import { Particle } from "./Particles.js";
@@ -69,8 +89,8 @@ for(let i=0; i<N;i++){
     const y = Math.random()*(canvas.height-100)+50
     const pos = new Vector2d(x,y)
 
-    const vx = (Math.random()-0.5)*6
-    const vy = (Math.random()-0.5)*6
+    const vx = (Math.random()-0.5)*2
+    const vy = (Math.random()-0.5)*2
     const vel = new Vector2d(vx,vy)
 
     const ax = 0
@@ -87,15 +107,15 @@ for(let i=0; i<N;i++){
     particles.push(p)
 }
 
-let filtered_clumps = {}
 
-const steps = 2
-const column_width = 2
-const row_height = 2
-function update(){
-    clearCanvas()
 
-    //code goes here
+//function to separate physics handling from drawing
+function update_physics(){
+    let filtered_clumps = {}
+    const steps = 2
+    const column_width = particles[0].r*2
+    const row_height = particles[0].r*2
+
     // 0. substeps for loop
     for (let step = 0; step < steps; step++) {
         filtered_clumps = {}
@@ -157,22 +177,68 @@ function update(){
             p.update_position(1/steps); // dt = 0.1
         }
     }
+}
+ 
+const frameTimes = Array(maxSamples).fill(0) // store frame counts to display the average
+const avgFrameTimes = Array(maxSamples).fill(0) //store avg frame counts to display the average over time
+const simTimes = Array(maxSamples).fill(0)
+const avgSimTimes = Array(maxSamples).fill(0)
 
-    // 4. draw after finishing all substeps
+function update_simulation(){
+    const now = performance.now() //time before the simulation
+
+    //clear screen
+    clearCanvas()
+
+    //run physics
+    update_physics()
+    const after_physics = performance.now() // to check how much time the physics are taking to compare with the time taken for rendering
+
+    //draw
     for (let s of springs) {
         s.draw_spring();
     }
 
     for (let p of particles) {
         p.draw();
-    }
+    }  
+
+    // FIND FPS
+    const after = performance.now() //time after the simulation
+    const fps = 1/((after-now)/1000) //how many frames the simulation is running
+
+    // FIND SPS (simulations per seconds)
+    const sps = 1/((after_physics-now)/1000)
+
+    // UPDATE FPS LIST
+    frameTimes.push(fps)
+    if(frameTimes.length>maxSamples) {frameTimes.shift()}
+
+    // UPDATE AVERAGE FPS LIST
+    const avg_fps = frameTimes.reduce((a,b)=>a+b, 0)/frameTimes.length
+    avgFrameTimes.push(avg_fps)
+    if(avgFrameTimes.length>maxSamples) {avgFrameTimes.shift()}
+
+    //UPDATE SPS LIST
+    simTimes.push(sps)
+    if(simTimes.length>maxSamples) {simTimes.shift()}
+
+    //UPDATE AVERAGE SPS LIST
+    const avg_sps = simTimes.reduce((a,b)=>a+b, 0)/simTimes.lenght
+    avgSimTimes.push(avg_sps)
+    if(avgSimTimes.length>maxSamples) {avgSimTimes.shift()}
 
 
-    //code ends here
-    requestAnimationFrame(update)
+    // UPDATE CHARTS
+    fpsChart.data.datasets[1].data = frameTimes.slice()
+    fpsChart.data.datasets[0].data = avgFrameTimes.slice()
+    fpsChart.data.datasets[2].data = avgSimTimes.slice()
+    fpsChart.update("none")
+
+    requestAnimationFrame(update_simulation)
 }
 
-update()
+update_simulation()
 
 
 
