@@ -89,8 +89,8 @@ for(let i=0; i<N;i++){
     const y = Math.random()*(canvas.height-100)+50
     const pos = new Vector2d(x,y)
 
-    const vx = (Math.random()-0.5)*2
-    const vy = (Math.random()-0.5)*2
+    const vx = (Math.random()-0.5)*10
+    const vy = (Math.random()-0.5)*10
     const vel = new Vector2d(vx,vy)
 
     const ax = 0
