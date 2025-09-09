@@ -83,7 +83,7 @@ import {Spring} from "./Springs.js"
 const particles = []
 const springs = []
 
-const N=10000
+const N=1000
 for(let i=0; i<N;i++){
     const x = Math.random()*(canvas.width-100)+50
     const y = Math.random()*(canvas.height-100)+50
@@ -97,43 +97,56 @@ for(let i=0; i<N;i++){
     const ay = 0
     const acc = new Vector2d(ax,ay)
 
-    const r = 1
+    const r = 2
     const color = "#0000ff"
 
-    const p_elasticity = 1
+    const p_elasticity = 0.99
     const w_elasticity = new Vector2d(1,1)
 
     const p = new Particle(pos,vel,acc,r,color,p_elasticity, w_elasticity)
     particles.push(p)
 }
 
+const p0 = new Particle(
+    new Vector2d(300,50),
+    new Vector2d(0,0),
+    new Vector2d(0,0),
+    20,
+    "#FF0000",
+    0.99,
+    new Vector2d(1,1),
+)
 
+particles.push(p0)
 
 //function to separate physics handling from drawing
 function update_physics(){
     let filtered_clumps = {}
-    const steps = 2
-    const column_width = particles[0].r*2
-    const row_height = particles[0].r*2
+    const steps = 8
+    const column_width = 40// particles[0].r*2
+    const row_height = 40// particles[0].r*2
 
     // 0. substeps for loop
     for (let step = 0; step < steps; step++) {
         filtered_clumps = {}
         // 1. reset accelerations
-        for (let p of particles) {
+        for (let i=0; i<particles.length; i++) {
+            const p=particles[i]
             p.acc.x1 = 0;
-            p.acc.y1 = 0;
+            p.acc.y1 = 0.08;
         }
 
         // ADD ALL FORCES FROM HERE...
-        for (let s of springs){
+        for (let i=0; i<springs.length; i++){
+            s = springs[i]
             s.add_spring_forces_to_particles()
         }
 
         // 2. apply forces & collisions
 
         //filter particles
-        for(let p of particles){
+        for(let i=0; i<particles.length; i++){
+            const p = particles[i]
             const grid_x = Math.floor(p.pos.x1/column_width) 
             const grid_y = Math.floor(p.pos.y1/row_height)
             const key = `${grid_x},${grid_y}`
@@ -173,7 +186,8 @@ function update_physics(){
         //...TO HERE
 
         // 3. integrate positions
-        for (let p of particles) {
+        for (let i=0; i<particles.length; i++) {
+            const p = particles[i]
             p.update_position(1/steps); // dt = 0.1
         }
     }
@@ -224,7 +238,7 @@ function update_simulation(){
     if(simTimes.length>maxSamples) {simTimes.shift()}
 
     //UPDATE AVERAGE SPS LIST
-    const avg_sps = simTimes.reduce((a,b)=>a+b, 0)/simTimes.lenght
+    const avg_sps = simTimes.reduce((a,b)=>a+b, 0)/simTimes.length
     avgSimTimes.push(avg_sps)
     if(avgSimTimes.length>maxSamples) {avgSimTimes.shift()}
 
