@@ -97,7 +97,7 @@ for(let i=0; i<N;i++){
     const ay = 0
     const acc = new Vector2d(ax,ay)
 
-    const r = 2
+    const r = 0.5
     const color = "#0000ff"
 
     const p_elasticity = 0.99
@@ -107,17 +107,6 @@ for(let i=0; i<N;i++){
     particles.push(p)
 }
 
-const p0 = new Particle(
-    new Vector2d(300,50),
-    new Vector2d(0,0),
-    new Vector2d(0,0),
-    20,
-    "#FF0000",
-    0.99,
-    new Vector2d(1,1),
-)
-
-particles.push(p0)
 
 //function to separate physics handling from drawing
 function update_physics(){
