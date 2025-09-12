@@ -83,7 +83,7 @@ import {Spring} from "./Springs.js"
 const particles = []
 const springs = []
 
-const N=1000
+const N=5000
 for(let i=0; i<N;i++){
     const x = Math.random()*(canvas.width-100)+50
     const y = Math.random()*(canvas.height-100)+50
@@ -97,10 +97,10 @@ for(let i=0; i<N;i++){
     const ay = 0
     const acc = new Vector2d(ax,ay)
 
-    const r = 0.5
+    const r = 2
     const color = "#0000ff"
 
-    const p_elasticity = 0.99
+    const p_elasticity = 1
     const w_elasticity = new Vector2d(1,1)
 
     const p = new Particle(pos,vel,acc,r,color,p_elasticity, w_elasticity)
@@ -111,9 +111,9 @@ for(let i=0; i<N;i++){
 //function to separate physics handling from drawing
 function update_physics(){
     let filtered_clumps = {}
-    const steps = 8
-    const column_width = 40// particles[0].r*2
-    const row_height = 40// particles[0].r*2
+    const steps = 2
+    const column_width = 4// particles[0].r*2
+    const row_height = 4// particles[0].r*2
 
     // 0. substeps for loop
     for (let step = 0; step < steps; step++) {
@@ -122,7 +122,7 @@ function update_physics(){
         for (let i=0; i<particles.length; i++) {
             const p=particles[i]
             p.acc.x1 = 0;
-            p.acc.y1 = 0.08;
+            p.acc.y1 = 0;
         }
 
         // ADD ALL FORCES FROM HERE...

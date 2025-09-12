@@ -15,10 +15,8 @@ document.body.appendChild(renderer.domElement);
 //test
 import { Particle } from "./Particles_webgl.js";
 import { Vector2d, VectorMath as VM, VectorPolar } from "./Vectors_webgl.js";
-import {Spring} from "./Springs_webgl.js"
 
 const particles = []
-const springs = []
 
 const N=1000
 for(let i=0; i<N;i++){
