@@ -23,9 +23,10 @@ Project Description
 
 ### In Progress
 
-- [ ] SIM/PERFORMANCE - implement webGL instead of canvas2d for graphics  
-- [ ] SIM/PERFORMANCE - physics calculations in webGL instead of cpu based  
+- [ ] SIM/PERFORMANCE - implement web workers to optimize  
 
 ### Done ✓
 
+- [x] 💀 SIM/PERFORMANCE - implement webGL instead of canvas2d for graphics  
+- [x] 💀SIM/PERFORMANCE - physics calculations in webGL instead of cpu based  
 

@@ -83,14 +83,14 @@ import {Spring} from "./Springs.js"
 const particles = []
 const springs = []
 
-const N=5000
+const N=5600
 for(let i=0; i<N;i++){
     const x = Math.random()*(canvas.width-100)+50
     const y = Math.random()*(canvas.height-100)+50
     const pos = new Vector2d(x,y)
 
-    const vx = (Math.random()-0.5)*10
-    const vy = (Math.random()-0.5)*10
+    const vx = (Math.random()-0.5)*5
+    const vy = (Math.random()-0.5)*5
     const vel = new Vector2d(vx,vy)
 
     const ax = 0
@@ -112,8 +112,8 @@ for(let i=0; i<N;i++){
 function update_physics(){
     let filtered_clumps = {}
     const steps = 2
-    const column_width = 4// particles[0].r*2
-    const row_height = 4// particles[0].r*2
+    const column_width = particles[0].r*2
+    const row_height = particles[0].r*2
 
     // 0. substeps for loop
     for (let step = 0; step < steps; step++) {

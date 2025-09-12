@@ -1,0 +1,16 @@
+Some benchmarks to keep track of progress of the simulation
+
+13/09/2025 
+Grid-Optimization particle to particle collision
+
+radius: 2
+velocities: [-5,5]
+window_size: 600x600
+steps: 2
+fps: 60
+
+we check the maximum amount (N) of particles that can keep up with 60fps with the aforementioned parameters. 
+N: 5600
+
+
+
