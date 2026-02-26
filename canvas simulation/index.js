@@ -83,7 +83,7 @@ import {Spring} from "./Springs.js"
 const particles = []
 const springs = []
 
-const N=5600
+const N=2000
 for(let i=0; i<N;i++){
     const x = Math.random()*(canvas.width-100)+50
     const y = Math.random()*(canvas.height-100)+50
@@ -97,11 +97,11 @@ for(let i=0; i<N;i++){
     const ay = 0
     const acc = new Vector2d(ax,ay)
 
-    const r = 2
+    const r = 4
     const color = "#0000ff"
 
-    const p_elasticity = 1
-    const w_elasticity = new Vector2d(1,1)
+    const p_elasticity = 0.99
+    const w_elasticity = new Vector2d(0.8,0.6)
 
     const p = new Particle(pos,vel,acc,r,color,p_elasticity, w_elasticity)
     particles.push(p)
@@ -122,7 +122,7 @@ function update_physics(){
         for (let i=0; i<particles.length; i++) {
             const p=particles[i]
             p.acc.x1 = 0;
-            p.acc.y1 = 0;
+            p.acc.y1 = 0.1;
         }
 
         // ADD ALL FORCES FROM HERE...
