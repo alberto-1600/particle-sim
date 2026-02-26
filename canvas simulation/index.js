@@ -83,8 +83,8 @@ import {Spring} from "./Springs.js"
 const particles = []
 const springs = []
 
-const N=2000
-for(let i=0; i<N;i++){
+function generate_random_particle(){
+    //returns a random particle with the following parameters
     const x = Math.random()*(canvas.width-100)+50
     const y = Math.random()*(canvas.height-100)+50
     const pos = new Vector2d(x,y)
@@ -97,14 +97,25 @@ for(let i=0; i<N;i++){
     const ay = 0
     const acc = new Vector2d(ax,ay)
 
-    const r = 4
+    const r = 10
     const color = "#0000ff"
 
     const p_elasticity = 0.99
     const w_elasticity = new Vector2d(0.8,0.6)
 
     const p = new Particle(pos,vel,acc,r,color,p_elasticity, w_elasticity)
+    return p
+}
+
+function add_random_particle(){
+    const p = generate_random_particle()
     particles.push(p)
+}
+document.getElementById("btn-add-random-particle").addEventListener("click", add_random_particle)
+
+const N=0
+for(let i=0; i<N;i++){
+    add_random_particle()
 }
 
 
@@ -188,13 +199,17 @@ const simTimes = Array(maxSamples).fill(0)
 const avgSimTimes = Array(maxSamples).fill(0)
 
 function update_simulation(){
+    console.log(particles)
+
     const now = performance.now() //time before the simulation
 
     //clear screen
     clearCanvas()
 
     //run physics
-    update_physics()
+    if(particles.length > 0){
+        update_physics()
+    }
     const after_physics = performance.now() // to check how much time the physics are taking to compare with the time taken for rendering
 
     //draw
